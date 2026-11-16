@@ -1,0 +1,80 @@
+name: autopost
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"      # кожні 15 хв (GitHub може запізнюватися на кілька хвилин)
+  push:
+    paths: ["posts/**"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Лише показати, що вийшло б (нічого не публікувати)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: autopost
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Prepare images (PNG → JPG for Instagram)
+        run: |
+          python -m autopost prepare
+          if [ -n "$(git status --porcelain posts)" ]; then
+            git config user.name "autopost-bot"
+            git config user.email "autopost-bot@users.noreply.github.com"
+            git add posts
+            git commit -m "autopost: prepare images [skip ci]"
+            git push
+            sleep 15   # дати raw.githubusercontent.com побачити нові файли
+          fi
+
+      - name: Check posts
+        run: python -m autopost check || true
+
+      - name: Publish due posts
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+          LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python -m autopost run --dry-run
+          else
+            python -m autopost run
+          fi
+
+      - name: Save publish state
+        if: always()
+        run: |
+          if [ -n "$(git status --porcelain posts)" ]; then
+            git config user.name "autopost-bot"
+            git config user.email "autopost-bot@users.noreply.github.com"
+            git add posts
+            git commit -m "autopost: state [skip ci]"
+            git pull --rebase
+            git push
+          fi

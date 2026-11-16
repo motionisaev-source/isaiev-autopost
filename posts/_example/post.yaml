@@ -1,0 +1,26 @@
+# Приклад поста. Папки, що починаються з "_", програма пропускає.
+# Щоб пост пішов: скопіюй папку з назвою на кшталт 2026-10-29_99pct_ua
+# і прибери draft або постав draft: false.
+
+publish_at: "2026-10-29 10:00"   # час Europe/Rome
+draft: true
+images: [ua_01.png, ua_02.png, ua_03.png]   # порядок слайдів
+alt: "Карусель Isaiev AI про опитування маркетологів"
+
+instagram:
+  caption: |
+    99% маркетологів уже працюють з AI. А дві третини з них бояться одного й того самого 👇
+    #дизайн #AI #isaievai
+  first_comment: "Джерело: Smartly, «The Agentic Era»"   # необов'язково
+
+threads:
+  publish_at: "2026-10-29 10:15"   # можна задати свій час для мережі
+  text: "99% маркетологів уже користуються AI. Що бачите ви: реклама вже стала однаковою?"
+
+linkedin:
+  enabled: false             # увімкни, коли додаси секрети LinkedIn
+  text: |
+    99% of marketers already use AI. Two-thirds fear the same thing.
+
+# telegram:
+#   text: "..."

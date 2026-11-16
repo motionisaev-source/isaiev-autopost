@@ -1,0 +1,30 @@
+name: refresh-tokens
+
+# Токени Instagram і Threads живуть 60 днів. Раз на тиждень подовжуємо їх
+# і записуємо нові значення в секрети репозиторію (потрібен секрет GH_PAT).
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh Instagram and Threads tokens
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          if [ -n "$IG_ACCESS_TOKEN" ]; then
+            NEW=$(curl -sf "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=$IG_ACCESS_TOKEN" | jq -r .access_token)
+            [ -n "$NEW" ] && [ "$NEW" != "null" ] && gh secret set IG_ACCESS_TOKEN --repo "$REPO" --body "$NEW" && echo "Instagram token refreshed"
+          fi
+          if [ -n "$THREADS_ACCESS_TOKEN" ]; then
+            NEW=$(curl -sf "https://graph.threads.net/refresh_access_token?grant_type=th_refresh_token&access_token=$THREADS_ACCESS_TOKEN" | jq -r .access_token)
+            [ -n "$NEW" ] && [ "$NEW" != "null" ] && gh secret set THREADS_ACCESS_TOKEN --repo "$REPO" --body "$NEW" && echo "Threads token refreshed"
+          fi
+          echo "LinkedIn: токен (60 днів) оновлюється вручну через tools/linkedin_auth.py"
