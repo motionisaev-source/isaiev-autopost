@@ -1,7 +1,7 @@
-draft: true   # NOT published until the owner approves (remove this line)
 publish_at: "2026-11-28 08:30"
 images: [01.png, 02.png, 03.png, 04.png]
 instagram:
+  enabled: false   # manual posting while Meta API is blocked
   caption: |
     Your product, made irresistible.
 
@@ -12,6 +12,7 @@ instagram:
 
     #3dproductvisualization #cinema4d #redshift #productfilm #creativeagency #motiondesign
 threads:
+  enabled: false   # Meta API blocked; not approved yet
   publish_at: "2026-11-28 08:45"
   text: |
     Your product, made irresistible.
