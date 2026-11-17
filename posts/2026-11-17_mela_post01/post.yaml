@@ -1,6 +1,7 @@
 publish_at: "2026-11-17 08:30"
 images: [01.png, 02.png, 03.png, 04.png, 05.png, 06.png, 07.png]
 instagram:
+  enabled: false   # Instagram blocked by Meta, posted manually
   caption: |
     5 reasons your product photo looks cheap (and how to fix each one) 👇
 
