@@ -1,0 +1,22 @@
+publish_at: "2026-12-03 19:00"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual posting while Meta API is blocked (evening reminder 18:50)
+  caption: |
+    Capri, edizione lime: il modo più veloce per arrivare in ritardo con stile. Tagga chi prenota la barca e dimentica il costume.
+
+    Capri, lime edition: the fastest way to be late with style. Tag the friend who books the boat and forgets the swimsuit. Save for your summer list.
+
+    Segui MELA per altre storie dall'Italia. Follow MELA for more Italy, upgraded.
+
+    #italia #vitaitaliana #memeitaliani #italianigram #dolcevita #madeinitaly #vespa #vespaitaliana
+    #italy #italianlife #relatable #travelitaly #aesthetic #editorial #moodboard #creativeagency
+threads:
+  enabled: false   # Meta API blocked
+  publish_at: "2026-12-03 19:15"
+  text: |
+    Capri, edizione lime: il modo più veloce per arrivare in ritardo con stile. Tagga chi prenota la barca e dimentica il costume.
+
+    Capri, lime edition: the fastest way to be late with style. Tag the friend who books the boat and forgets the swimsuit. Save for your summer list.
+
+    Segui MELA / Follow MELA #italia #italy

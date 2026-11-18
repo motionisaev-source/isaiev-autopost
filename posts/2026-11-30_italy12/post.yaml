@@ -1,0 +1,22 @@
+publish_at: "2026-11-30 19:00"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual posting while Meta API is blocked (evening reminder 18:50)
+  caption: |
+    Il monumento più longevo d'Italia: l'impalcatura. Tagga l'edificio che non hai mai visto senza.
+
+    Italy's most permanent monument: the scaffolding. Tag the building you've never seen without it. Follow for more.
+
+    Segui MELA per altre storie dall'Italia. Follow MELA for more Italy, upgraded.
+
+    #italia #vitaitaliana #memeitaliani #italianigram #dolcevita #madeinitaly
+    #italy #italianlife #relatable #travelitaly #aesthetic #editorial #moodboard #creativeagency
+threads:
+  enabled: false   # Meta API blocked
+  publish_at: "2026-11-30 19:15"
+  text: |
+    Il monumento più longevo d'Italia: l'impalcatura. Tagga l'edificio che non hai mai visto senza.
+
+    Italy's most permanent monument: the scaffolding. Tag the building you've never seen without it. Follow for more.
+
+    Segui MELA / Follow MELA #italia #italy

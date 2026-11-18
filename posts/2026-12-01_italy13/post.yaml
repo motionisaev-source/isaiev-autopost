@@ -1,0 +1,22 @@
+publish_at: "2026-12-01 19:00"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual posting while Meta API is blocked (evening reminder 18:50)
+  caption: |
+    Gondola, ma versione Vespa. Venezia al tramonto, zero rumore di motore. Tagga chi porteresti a fare questo giro.
+
+    Gondola, but make it Vespa. Venice at dusk, no engine noise. Tag your date for this ride. Save for your next trip.
+
+    Segui MELA per altre storie dall'Italia. Follow MELA for more Italy, upgraded.
+
+    #italia #vitaitaliana #memeitaliani #italianigram #dolcevita #madeinitaly #vespa #vespaitaliana
+    #italy #italianlife #relatable #travelitaly #aesthetic #editorial #moodboard #creativeagency
+threads:
+  enabled: false   # Meta API blocked
+  publish_at: "2026-12-01 19:15"
+  text: |
+    Gondola, ma versione Vespa. Venezia al tramonto, zero rumore di motore. Tagga chi porteresti a fare questo giro.
+
+    Gondola, but make it Vespa. Venice at dusk, no engine noise. Tag your date for this ride. Save for your next trip.
+
+    Segui MELA / Follow MELA #italia #italy
