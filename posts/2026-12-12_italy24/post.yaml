@@ -1,0 +1,22 @@
+publish_at: "2026-12-12 19:00"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual posting while Meta API is blocked (evening reminder 18:50)
+  caption: |
+    L'ora dell'aperitivo: caffè, succo fresco, stuzzichini gratis, zero fretta. Tagga chi vedresti alle 19. Scrivi APERITIVO per la lista dei posti.
+
+    Aperitivo hour: espresso, fresh juice, free snacks and zero rush. Tag who you'd meet at 7. Comment APERITIVO for the spots list.
+
+    Segui MELA per altre storie dall'Italia. Follow MELA for more Italy, upgraded.
+
+    #italia #vitaitaliana #memeitaliani #italianigram #dolcevita #madeinitaly
+    #italy #italianlife #relatable #travelitaly #aesthetic #editorial #moodboard #creativeagency
+threads:
+  enabled: false   # Meta API blocked
+  publish_at: "2026-12-12 19:15"
+  text: |
+    L'ora dell'aperitivo: caffè, succo fresco, stuzzichini gratis, zero fretta. Tagga chi vedresti alle 19. Scrivi APERITIVO per la lista dei posti.
+
+    Aperitivo hour: espresso, fresh juice, free snacks and zero rush. Tag who you'd meet at 7. Comment APERITIVO for the spots list.
+
+    Segui MELA / Follow MELA #italia #italy
