@@ -11,7 +11,7 @@ import urllib.parse
 from PIL import Image
 
 from .core import MAX_ATTEMPTS, PostError, due_jobs, load_posts, now_utc
-from .networks import ApiError, Instagram, LinkedIn, Telegram, Threads
+from .networks import ApiError, Instagram, LinkedIn, Telegram, Threads, ThreadsVasyl
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -31,6 +31,7 @@ def media_url(post, path) -> str:
 PUBLISHERS = {
     "instagram": lambda: Instagram(media_url),
     "threads": lambda: Threads(media_url),
+    "threads_vasyl": lambda: ThreadsVasyl(media_url),
     "linkedin": LinkedIn,
     "telegram": Telegram,
 }

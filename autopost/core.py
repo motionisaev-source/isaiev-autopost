@@ -11,7 +11,9 @@ from zoneinfo import ZoneInfo
 import yaml
 
 DEFAULT_TZ = os.environ.get("AUTOPOST_TZ", "Europe/Rome")
-NETWORKS = ("instagram", "threads", "linkedin", "telegram")
+NETWORKS = ("instagram", "threads", "threads_vasyl", "linkedin", "telegram")
+# Extra accounts reuse the main block's content when their own block leaves it out.
+FALLBACK = {"threads_vasyl": "threads"}
 MAX_ATTEMPTS = int(os.environ.get("AUTOPOST_MAX_ATTEMPTS", "3"))
 STATE_FILE = "published.json"
 
@@ -52,12 +54,23 @@ class Post:
     def networks(self) -> list[str]:
         return [n for n in NETWORKS if isinstance(self.data.get(n), dict) and self.data[n].get("enabled", True)]
 
+    def _cfg(self, network: str) -> dict:
+        cfg = dict(self.data.get(network) or {})
+        base = FALLBACK.get(network)
+        if base:
+            merged = dict(self.data.get(base) or {})
+            merged.pop("publish_at", None)
+            merged.pop("enabled", None)
+            merged.update(cfg)
+            cfg = merged
+        return cfg
+
     def text(self, network: str) -> str:
-        cfg = self.data.get(network) or {}
+        cfg = self._cfg(network)
         return str(cfg.get("text") or cfg.get("caption") or self.data.get("text") or "").strip()
 
     def images(self, network: str) -> list[pathlib.Path]:
-        cfg = self.data.get(network) or {}
+        cfg = self._cfg(network)
         names = cfg.get("images", self.data.get("images", [])) or []
         paths = [self.folder / n for n in names]
         missing = [p.name for p in paths if not p.exists()]
@@ -67,7 +80,7 @@ class Post:
 
     def video(self, network: str):
         """Optional single video (yaml key `video`, per network or top level). None if not set."""
-        cfg = self.data.get(network) or {}
+        cfg = self._cfg(network)
         name = cfg.get("video", self.data.get("video"))
         if not name:
             return None
@@ -77,7 +90,7 @@ class Post:
         return path
 
     def alt(self, network: str) -> str:
-        cfg = self.data.get(network) or {}
+        cfg = self._cfg(network)
         return str(cfg.get("alt") or self.data.get("alt") or "")
 
     def option(self, network: str, key: str, default=None):

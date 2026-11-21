@@ -16,6 +16,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_VASYL_ACCESS_TOKEN: ${{ secrets.THREADS_VASYL_ACCESS_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           set -e
@@ -26,5 +27,9 @@ jobs:
           if [ -n "$THREADS_ACCESS_TOKEN" ]; then
             NEW=$(curl -sf "https://graph.threads.net/refresh_access_token?grant_type=th_refresh_token&access_token=$THREADS_ACCESS_TOKEN" | jq -r .access_token)
             [ -n "$NEW" ] && [ "$NEW" != "null" ] && gh secret set THREADS_ACCESS_TOKEN --repo "$REPO" --body "$NEW" && echo "Threads token refreshed"
+          fi
+          if [ -n "$THREADS_VASYL_ACCESS_TOKEN" ]; then
+            NEW=$(curl -sf "https://graph.threads.net/refresh_access_token?grant_type=th_refresh_token&access_token=$THREADS_VASYL_ACCESS_TOKEN" | jq -r .access_token)
+            [ -n "$NEW" ] && [ "$NEW" != "null" ] && gh secret set THREADS_VASYL_ACCESS_TOKEN --repo "$REPO" --body "$NEW" && echo "Threads @isaiev_vasyl token refreshed"
           fi
           echo "LinkedIn: токен (60 днів) оновлюється вручну через tools/linkedin_auth.py"

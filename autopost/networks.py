@@ -134,6 +134,7 @@ class Threads:
     """Threads API (graph.threads.net). Text ≤500 chars, 0–20 images."""
 
     name = "threads"
+    env_prefix = "THREADS"
     max_text = 500
 
     def __init__(self, media_url: Callable[[Post, object], str]):
@@ -141,10 +142,10 @@ class Threads:
         self.base = f"https://graph.threads.net/{os.environ.get('THREADS_API_VERSION', 'v1.0')}"
 
     def _user(self) -> str:
-        return os.environ.get("THREADS_USER_ID", "").strip() or "me"
+        return os.environ.get(f"{self.env_prefix}_USER_ID", "").strip() or "me"
 
     def _token(self) -> str:
-        return _env("THREADS_ACCESS_TOKEN")
+        return _env(f"{self.env_prefix}_ACCESS_TOKEN")
 
     def _create(self, **params) -> str:
         params["access_token"] = self._token()
@@ -157,11 +158,11 @@ class Threads:
 
     def validate(self, post: Post) -> None:
         if len(post.text(self.name)) > self.max_text:
-            raise PostError("threads: text longer than 500 characters")
+            raise PostError(f"{self.name}: text longer than 500 characters")
         if len(post.images(self.name)) > 20:
-            raise PostError("threads: more than 20 images")
+            raise PostError(f"{self.name}: more than 20 images")
         if not post.text(self.name) and not post.images(self.name):
-            raise PostError("threads: empty post")
+            raise PostError(f"{self.name}: empty post")
 
     def publish(self, post: Post) -> dict:
         self.validate(post)
@@ -349,3 +350,11 @@ class Telegram:
                 "is_anonymous": "true", "allows_multiple_answers": "false"}, timeout=TIMEOUT))
             out["poll_id"] = (pbody.get("result") or {}).get("message_id")
         return out
+
+
+class ThreadsVasyl(Threads):
+    """Second Threads account @isaiev_vasyl. Opt-in per post with a `threads_vasyl:` block
+    (empty block = same text/images as `threads`). Secrets: THREADS_VASYL_ACCESS_TOKEN (+ optional THREADS_VASYL_USER_ID)."""
+
+    name = "threads_vasyl"
+    env_prefix = "THREADS_VASYL"

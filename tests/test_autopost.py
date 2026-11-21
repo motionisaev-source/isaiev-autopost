@@ -115,3 +115,17 @@ def test_validation_errors(env):
     posts = env / "posts"
     make_post(posts, "p3", "2020-01-01 10:00", {"threads": {"text": "x" * 501}, "linkedin": None})
     assert cli.cmd_check(posts) == 1
+
+
+def test_threads_vasyl_optin_and_fallback(tmp_path):
+    from autopost.core import load_posts
+    d = tmp_path / "pv"; d.mkdir()
+    (d / "post.yaml").write_text(
+        'publish_at: "2020-01-01 10:00"\nthreads:\n  text: "Hello"\nthreads_vasyl: {}\n', encoding="utf-8")
+    (tmp_path / "po").mkdir()
+    (tmp_path / "po" / "post.yaml").write_text(
+        'publish_at: "2020-01-01 10:00"\nthreads:\n  text: "Only main"\n', encoding="utf-8")
+    posts = {p.name: p for p in load_posts(tmp_path)}
+    assert "threads_vasyl" in posts["pv"].networks()
+    assert posts["pv"].text("threads_vasyl") == "Hello"
+    assert "threads_vasyl" not in posts["po"].networks()
