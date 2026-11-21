@@ -34,6 +34,16 @@
 4. Застосунок можна залишити в режимі розробки, бо публікуєш лише у власні акаунти.
 5. Токени діють 60 днів. Щоб вони оновлювались самі, створи на github.com → Settings → Developer settings → Fine-grained token доступ до цього репозиторію з правом **Secrets: Read and write**. Збережи його як секрет `GH_PAT`. Після цього щотижневий workflow `refresh-tokens` подовжуватиме токени.
 
+## Крок 2b. Facebook-сторінка + Instagram через сторінку (рекомендовано)
+Цей шлях не потребує бізнес-портфоліо Meta.
+1. Instagram (професійний акаунт) підключений до сторінки Facebook (Meta Business Suite → «Connect Instagram»).
+2. У додатку Meta (developers.facebook.com) є дозволи `pages_manage_posts`, `pages_show_list`, `pages_read_engagement`, `instagram_basic`, `instagram_content_publish`.
+3. Graph API Explorer → вибрати додаток → User Token з цими дозволами → обміняти на довгий токен → `GET /me/accounts` дає **Page token** (безстроковий).
+4. `GET /{page-id}?fields=instagram_business_account` дає id Instagram.
+5. Секрети GitHub: `FB_PAGE_ID`, `FB_PAGE_ACCESS_TOKEN`, `IG_USER_ID` (id з п.4). `IG_ACCESS_TOKEN` можна не задавати: Instagram візьме токен сторінки.
+
+У `post.yaml` блок `facebook:` (text, images або `video`). Для Instagram `video: clip.mp4` публікується як Reels (`thumb_offset` у мс або `cover: cover.jpg`).
+
 ## Крок 3. LinkedIn (≈20 хв)
 
 **Чому не другий профіль:** LinkedIn дозволяє одній людині мати лише один профіль. Тому для бренду створи **сторінку компанії «Isaiev AI»**: «Для бізнесу» → «Створити сторінку компанії». Вона знадобиться і для застосунку.

@@ -1,6 +1,7 @@
 """Publishers for each social network. Official APIs only."""
 from __future__ import annotations
 
+import json
 import os
 import re
 import time
@@ -49,7 +50,14 @@ def _poll(fn: Callable[[], str], ok: tuple[str, ...], bad: tuple[str, ...], what
 
 # ---------------------------------------------------------------- Instagram
 class Instagram:
-    """Instagram API with Instagram Login (graph.instagram.com). JPEG only, 1–10 images."""
+    """Instagram content publishing. Photos (1–10, JPEG) or one video posted as a Reel.
+
+    Two official ways in, chosen by IG_API_HOST:
+    - graph.facebook.com (default): Instagram API with Facebook Login. IG_USER_ID is the
+      Instagram business account id linked to the Facebook Page; the token is a Page token
+      (IG_ACCESS_TOKEN, or FB_PAGE_ACCESS_TOKEN when IG_ACCESS_TOKEN is not set).
+    - graph.instagram.com: Instagram API with Instagram Login (needs a business portfolio).
+    """
 
     name = "instagram"
     max_text = 2200
@@ -57,13 +65,17 @@ class Instagram:
     def __init__(self, media_url: Callable[[Post, object], str]):
         self.media_url = media_url
         self.version = os.environ.get("IG_API_VERSION", "v23.0")
-        self.base = f"https://graph.instagram.com/{self.version}"
+        host = os.environ.get("IG_API_HOST", "").strip() or "graph.facebook.com"
+        self.base = f"https://{host}/{self.version}"
 
     def _user(self) -> str:
         return _env("IG_USER_ID")
 
     def _token(self) -> str:
-        return _env("IG_ACCESS_TOKEN")
+        tok = os.environ.get("IG_ACCESS_TOKEN", "").strip() or os.environ.get("FB_PAGE_ACCESS_TOKEN", "").strip()
+        if not tok:
+            raise PostError("secret IG_ACCESS_TOKEN (or FB_PAGE_ACCESS_TOKEN) is not set")
+        return tok
 
     def _create(self, **params) -> str:
         params["access_token"] = self._token()
@@ -84,31 +96,58 @@ class Instagram:
         return out
 
     def validate(self, post: Post) -> None:
-        imgs = self.images(post)
-        if not 1 <= len(imgs) <= 10:
-            raise PostError("instagram: needs 1–10 images")
-        bad = [p.name for p in imgs if p.suffix.lower() not in (".jpg", ".jpeg")]
-        if bad:
-            raise PostError(f"instagram: JPEG only, got {', '.join(bad)} (run `python -m autopost prepare`)")
+        video = post.video(self.name)
+        if video:
+            if video.suffix.lower() not in (".mp4", ".mov"):
+                raise PostError("instagram: Reels video must be .mp4 or .mov")
+        else:
+            imgs = self.images(post)
+            if not 1 <= len(imgs) <= 10:
+                raise PostError("instagram: needs 1–10 images or one video")
+            bad = [p.name for p in imgs if p.suffix.lower() not in (".jpg", ".jpeg")]
+            if bad:
+                raise PostError(f"instagram: JPEG only, got {', '.join(bad)} (run `python -m autopost prepare`)")
         if len(post.text(self.name)) > self.max_text:
             raise PostError("instagram: caption longer than 2200 characters")
         if post.text(self.name).count("#") > 30:
             raise PostError("instagram: more than 30 hashtags")
 
+    def _wait(self, cid: str, what: str, rounds: int = 1) -> None:
+        for _ in range(rounds):
+            try:
+                _poll(lambda: self._status(cid), ("FINISHED",), ("ERROR", "EXPIRED"), what)
+                return
+            except ApiError as e:
+                if "still processing" not in str(e):
+                    raise
+        raise ApiError(f"{what}: still processing")
+
     def publish(self, post: Post) -> dict:
         self.validate(post)
-        imgs = self.images(post)
         caption = post.text(self.name)
-        if len(imgs) == 1:
-            cid = self._create(image_url=self.media_url(post, imgs[0]), caption=caption)
+        video = post.video(self.name)
+        if video:
+            params = dict(media_type="REELS", video_url=self.media_url(post, video), caption=caption,
+                          share_to_feed="true")
+            cover = post.option(self.name, "cover")
+            if cover:
+                params["cover_url"] = self.media_url(post, post.folder / cover)
+            elif post.option(self.name, "thumb_offset") is not None:
+                params["thumb_offset"] = str(int(post.option(self.name, "thumb_offset")))
+            cid = self._create(**params)
+            self._wait(cid, "instagram reel", rounds=5)  # video processing takes minutes
         else:
-            children = []
-            for img in imgs:
-                child = self._create(image_url=self.media_url(post, img), is_carousel_item="true")
-                _poll(lambda c=child: self._status(c), ("FINISHED",), ("ERROR", "EXPIRED"), "instagram item")
-                children.append(child)
-            cid = self._create(media_type="CAROUSEL", children=",".join(children), caption=caption)
-        _poll(lambda: self._status(cid), ("FINISHED",), ("ERROR", "EXPIRED"), "instagram post")
+            imgs = self.images(post)
+            if len(imgs) == 1:
+                cid = self._create(image_url=self.media_url(post, imgs[0]), caption=caption)
+            else:
+                children = []
+                for img in imgs:
+                    child = self._create(image_url=self.media_url(post, img), is_carousel_item="true")
+                    self._wait(child, "instagram item")
+                    children.append(child)
+                cid = self._create(media_type="CAROUSEL", children=",".join(children), caption=caption)
+            self._wait(cid, "instagram post")
         body = _check(requests.post(f"{self.base}/{self._user()}/media_publish",
                                     data={"creation_id": cid, "access_token": self._token()}, timeout=TIMEOUT))
         media_id = body["id"]
@@ -127,6 +166,75 @@ class Instagram:
             except ApiError as e:  # post is already live: never fail the whole job for a comment
                 result["first_comment"] = f"failed: {e}"
         return result
+
+
+# ----------------------------------------------------------------- Facebook
+class Facebook:
+    """Facebook Page posts via the Graph API (Pages API). Text, 1–10 photos or one video.
+    Secrets: FB_PAGE_ID, FB_PAGE_ACCESS_TOKEN (Page token with pages_manage_posts)."""
+
+    name = "facebook"
+    max_text = 63206
+
+    def __init__(self, media_url: Callable[[Post, object], str]):
+        self.media_url = media_url
+        self.base = f"https://graph.facebook.com/{os.environ.get('FB_API_VERSION', 'v23.0')}"
+
+    def _page(self) -> str:
+        return _env("FB_PAGE_ID")
+
+    def _token(self) -> str:
+        return _env("FB_PAGE_ACCESS_TOKEN")
+
+    def _post(self, edge: str, **params) -> dict:
+        params["access_token"] = self._token()
+        return _check(requests.post(f"{self.base}/{edge}", data=params, timeout=TIMEOUT * 5))
+
+    def validate(self, post: Post) -> None:
+        text, imgs, video = post.text(self.name), post.images(self.name), post.video(self.name)
+        if len(text) > self.max_text:
+            raise PostError("facebook: text too long")
+        if len(imgs) > 10:
+            raise PostError("facebook: more than 10 images")
+        if not text and not imgs and not video:
+            raise PostError("facebook: empty post")
+
+    def _permalink(self, obj_id: str):
+        try:
+            info = _check(requests.get(f"{self.base}/{obj_id}", params={"fields": "permalink_url", "access_token": self._token()}, timeout=TIMEOUT))
+            url = info.get("permalink_url")
+            return f"https://www.facebook.com{url}" if url and url.startswith("/") else url
+        except ApiError:
+            return None
+
+    def publish(self, post: Post) -> dict:
+        self.validate(post)
+        page, text = self._page(), post.text(self.name)
+        imgs, video = self._jpgs(post), post.video(self.name)
+        if video:
+            body = self._post(f"{page}/videos", file_url=self.media_url(post, video), description=text)
+            obj = body["id"]
+        elif not imgs:
+            link = post.option(self.name, "link")
+            body = self._post(f"{page}/feed", message=text, **({"link": link} if link else {}))
+            obj = body["id"]
+        elif len(imgs) == 1:
+            body = self._post(f"{page}/photos", url=self.media_url(post, imgs[0]), caption=text)
+            obj = body.get("post_id") or body["id"]
+        else:
+            ids = [self._post(f"{page}/photos", url=self.media_url(post, p), published="false")["id"] for p in imgs]
+            params = {"message": text}
+            for i, mid in enumerate(ids):
+                params[f"attached_media[{i}]"] = json.dumps({"media_fbid": mid})
+            obj = self._post(f"{page}/feed", **params)["id"]
+        return {"id": obj, "url": self._permalink(obj)}
+
+    def _jpgs(self, post: Post):
+        out = []
+        for p in post.images(self.name):
+            j = p.with_suffix(".jpg")
+            out.append(j if p.suffix.lower() not in (".jpg", ".jpeg") and j.exists() else p)
+        return out
 
 
 # ------------------------------------------------------------------ Threads

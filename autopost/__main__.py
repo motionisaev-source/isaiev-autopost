@@ -11,7 +11,7 @@ import urllib.parse
 from PIL import Image
 
 from .core import MAX_ATTEMPTS, PostError, due_jobs, load_posts, now_utc
-from .networks import ApiError, Instagram, LinkedIn, Telegram, Threads, ThreadsVasyl
+from .networks import ApiError, Facebook, Instagram, LinkedIn, Telegram, Threads, ThreadsVasyl
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -22,7 +22,7 @@ def media_url(post, path) -> str:
         repo = os.environ.get("GITHUB_REPOSITORY")
         branch = os.environ.get("GITHUB_REF_NAME", "main")
         if not repo:
-            raise PostError("MEDIA_BASE_URL is not set (needed for Instagram/Threads image URLs)")
+            raise PostError("MEDIA_BASE_URL is not set (needed for Instagram/Facebook/Threads media URLs)")
         base = f"https://raw.githubusercontent.com/{repo}/{branch}"
     rel = path.resolve().relative_to(ROOT).as_posix()
     return f"{base}/{urllib.parse.quote(rel)}"
@@ -30,6 +30,7 @@ def media_url(post, path) -> str:
 
 PUBLISHERS = {
     "instagram": lambda: Instagram(media_url),
+    "facebook": lambda: Facebook(media_url),
     "threads": lambda: Threads(media_url),
     "threads_vasyl": lambda: ThreadsVasyl(media_url),
     "linkedin": LinkedIn,
