@@ -1,0 +1,12 @@
+publish_at: "2026-11-21 08:30"
+video: VARGEN_9x16.mp4
+instagram:
+  enabled: false   # manual (Meta IG API blocked)
+threads:
+  publish_at: "2026-11-21 08:30"
+  text: |
+    Case study: VARGEN. Make a watch feel rare in 15 seconds, without a shoot. Result: one 15-second film in 16:9 and 9:16 for site, ads and Reels. Comment BRIEF for the breakdown. → mela.team
+linkedin:
+  enabled: false
+telegram:
+  enabled: false   # posted by local bot task MELA TG VARGEN 0830
