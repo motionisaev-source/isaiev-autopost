@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo
 import yaml
 
 DEFAULT_TZ = os.environ.get("AUTOPOST_TZ", "Europe/Rome")
-NETWORKS = ("instagram", "threads", "threads_vasyl", "linkedin", "telegram")
+NETWORKS = ("instagram", "facebook", "threads", "threads_vasyl", "linkedin", "telegram")
 # Extra accounts reuse the main block's content when their own block leaves it out.
 FALLBACK = {"threads_vasyl": "threads"}
 # Every Threads post scheduled from this moment on is mirrored to @isaiev_vasyl automatically

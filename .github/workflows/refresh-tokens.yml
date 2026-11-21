@@ -20,8 +20,9 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           set -e
+          # only an Instagram Login token is refreshed here; a Facebook Page token (FB_PAGE_ACCESS_TOKEN) never expires
           if [ -n "$IG_ACCESS_TOKEN" ]; then
-            NEW=$(curl -sf "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=$IG_ACCESS_TOKEN" | jq -r .access_token)
+            NEW=$(curl -sf "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=$IG_ACCESS_TOKEN" | jq -r .access_token || true)
             [ -n "$NEW" ] && [ "$NEW" != "null" ] && gh secret set IG_ACCESS_TOKEN --repo "$REPO" --body "$NEW" && echo "Instagram token refreshed"
           fi
           if [ -n "$THREADS_ACCESS_TOKEN" ]; then
