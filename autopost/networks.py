@@ -167,7 +167,10 @@ class Threads:
         self.validate(post)
         imgs = post.images(self.name)
         text = post.text(self.name)
-        if not imgs:
+        video = post.video(self.name)
+        if video:
+            cid = self._create(media_type="VIDEO", video_url=self.media_url(post, video), text=text)
+        elif not imgs:
             cid = self._create(media_type="TEXT", text=text)
         elif len(imgs) == 1:
             cid = self._create(media_type="IMAGE", image_url=self.media_url(post, imgs[0]), text=text)
@@ -179,7 +182,18 @@ class Threads:
             for child in children:
                 _poll(lambda c=child: self._status(c), ("FINISHED",), ("ERROR", "EXPIRED"), "threads item")
             cid = self._create(media_type="CAROUSEL", children=",".join(children), text=text)
-        _poll(lambda: self._status(cid), ("FINISHED",), ("ERROR", "EXPIRED"), "threads post")
+        if video:  # video containers take longer to process
+            for _ in range(4):
+                try:
+                    _poll(lambda: self._status(cid), ("FINISHED",), ("ERROR", "EXPIRED"), "threads video")
+                    break
+                except ApiError as e:
+                    if "still processing" not in str(e):
+                        raise
+            else:
+                raise ApiError("threads video: still processing")
+        else:
+            _poll(lambda: self._status(cid), ("FINISHED",), ("ERROR", "EXPIRED"), "threads post")
         body = _check(requests.post(f"{self.base}/{self._user()}/threads_publish",
                                     data={"creation_id": cid, "access_token": self._token()}, timeout=TIMEOUT))
         result = {"id": body["id"]}
@@ -226,6 +240,8 @@ class LinkedIn:
         return author
 
     def validate(self, post: Post) -> None:
+        if post.video(self.name):
+            raise PostError("linkedin: video posts are not supported yet")
         if len(post.text(self.name)) > self.max_text:
             raise PostError("linkedin: text longer than 3000 characters")
         if len(post.images(self.name)) > 20:
@@ -280,9 +296,21 @@ class Telegram:
         chat = post.option(self.name, "chat_id") or _env("TELEGRAM_CHAT_ID")
         text = post.text(self.name)
         imgs = post.images(self.name)
-        if len(text) > (1024 if imgs else 4096):
+        video = post.video(self.name)
+        if len(text) > 4096 or (imgs and len(text) > 1024):
             raise PostError("telegram: text too long (1024 with images, 4096 without)")
-        if not imgs:
+        if video:
+            if video.stat().st_size > 50 * 1024 * 1024:
+                raise PostError("telegram: video over 50 MB (Bot API upload limit)")
+            short = len(text) <= 1024
+            with video.open("rb") as f:
+                body = _check(requests.post(self._api("sendVideo"),
+                                            data={"chat_id": chat, "caption": text if short else "", "supports_streaming": "true"},
+                                            files={"video": f}, timeout=300))
+            if not short:  # long caption goes as a reply right under the video
+                vid = (body.get("result") or {}).get("message_id")
+                _check(requests.post(self._api("sendMessage"), data={"chat_id": chat, "text": text, "reply_to_message_id": vid}, timeout=TIMEOUT))
+        elif not imgs:
             body = _check(requests.post(self._api("sendMessage"), data={"chat_id": chat, "text": text}, timeout=TIMEOUT))
         elif len(imgs) == 1:
             with imgs[0].open("rb") as f:
@@ -308,4 +336,16 @@ class Telegram:
                     f.close()
         res = body.get("result")
         msg = res[0] if isinstance(res, list) else res
-        return {"id": msg.get("message_id") if msg else None}
+        out = {"id": msg.get("message_id") if msg else None}
+        poll = post.option(self.name, "poll")
+        if poll:
+            import json
+            question = str(poll.get("question", "")).strip()
+            options = [str(o).strip() for o in poll.get("options", [])]
+            if not question or len(question) > 300 or not 2 <= len(options) <= 10 or any(not o or len(o) > 100 for o in options):
+                raise PostError("telegram poll: need a question (<=300 chars) and 2-10 options (<=100 chars each)")
+            pbody = _check(requests.post(self._api("sendPoll"), data={
+                "chat_id": chat, "question": question, "options": json.dumps(options),
+                "is_anonymous": "true", "allows_multiple_answers": "false"}, timeout=TIMEOUT))
+            out["poll_id"] = (pbody.get("result") or {}).get("message_id")
+        return out

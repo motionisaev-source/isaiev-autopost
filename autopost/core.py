@@ -65,6 +65,17 @@ class Post:
             raise PostError(f"{self.name}: image files not found: {', '.join(missing)}")
         return paths
 
+    def video(self, network: str):
+        """Optional single video (yaml key `video`, per network or top level). None if not set."""
+        cfg = self.data.get(network) or {}
+        name = cfg.get("video", self.data.get("video"))
+        if not name:
+            return None
+        path = self.folder / name
+        if not path.exists():
+            raise PostError(f"{self.name}: video file not found: {name}")
+        return path
+
     def alt(self, network: str) -> str:
         cfg = self.data.get(network) or {}
         return str(cfg.get("alt") or self.data.get("alt") or "")
