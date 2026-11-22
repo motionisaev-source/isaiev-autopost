@@ -1,4 +1,4 @@
-publish_at: "2026-11-27 08:30"
+publish_at: "2026-12-14 12:30"
 images: [01.png, 02.png, 03.png]
 instagram:
   enabled: false   # manual posting while Meta API is blocked
@@ -12,7 +12,7 @@ instagram:
     #typography #type #marketing #digitalmarketing #ai
 threads:
   enabled: false   # Meta API blocked; not approved yet
-  publish_at: "2026-11-27 08:45"
+  publish_at: "2026-12-14 12:45"
   text: |
     Big type. Few words. One idea.
 

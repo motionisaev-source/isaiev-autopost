@@ -1,4 +1,4 @@
-publish_at: "2026-11-22 08:30"
+publish_at: "2026-12-05 12:30"
 images: [01.png]
 instagram:
   enabled: false   # manual posting while Meta API is blocked
@@ -11,7 +11,7 @@ instagram:
     #marketing #digitalmarketing #ai #design #aiart
 threads:
   enabled: false   # Meta API blocked; not approved yet
-  publish_at: "2026-11-22 08:45"
+  publish_at: "2026-12-05 12:45"
   text: |
     20 minutes. Your product.
 

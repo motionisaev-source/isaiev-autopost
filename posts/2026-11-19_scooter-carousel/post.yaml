@@ -1,0 +1,37 @@
+﻿publish_at: "2026-11-24 12:30"
+images: [01.jpg, 02.jpg, 03.jpg, 04.jpg, 05.jpg, 06.jpg, 07.jpg, 08.jpg, 09.jpg]
+alt: "Карусель: дев'ять скутерів-човнів у італійських портах, від Амальфі до Чінкве-Терре"
+instagram:
+  enabled: false   # Instagram робиться вручну
+threads:
+  publish_at: "2026-11-24 12:30"
+  text: |
+    Nove scooter, nove porti, zero benzina. Quale ti porta via oggi?
+    
+    Nine scooters, nine ports, zero fuel. Which one carries you away today? Swipe through and tell us your favourite.
+    
+    Dove andresti in scooter? Amalfi, Como, Venezia, Capri, Sardegna, Napoli o Cinque Terre? Scrivilo nei commenti.
+    Where would you ride? Amalfi, Como, Venice, Capri, Sardinia, Naples or Cinque Terre? Tell us in the comments.
+
+    Segui MELA / Follow MELA #italia #italy
+linkedin:
+  enabled: false   # posted via PC browser until LinkedIn API approved
+  text: |
+    Nove scooter, nove porti, zero benzina. Amalfi, Como, Venezia, Capri, Sardegna, Napoli, Cinque Terre: quale ti porta via oggi? Scorri fino all'ultima e dicci la tua preferita. Salva per il prossimo viaggio e tagga chi ti accompagna.
+    
+    Nine scooters, nine ports, zero fuel. Amalfi, Como, Venice, Capri, Sardinia, Naples, Cinque Terre: which one carries you away today? Swipe to the last one and tell us your favourite. Save it for your next trip and tag who you'd take along.
+    
+    Dove andresti in scooter? Amalfi, Como, Venezia, Capri, Sardegna, Napoli o Cinque Terre? Scrivilo nei commenti.
+    Where would you ride? Amalfi, Como, Venice, Capri, Sardinia, Naples or Cinque Terre? Tell us in the comments.
+
+    Segui MELA per altre storie dall'Italia. Follow MELA for more Italy, upgraded.
+    
+telegram:
+  publish_at: "2026-11-24 12:30"
+  text: |
+    Дев'ять скутерів, дев'ять портів, нуль бензину. Амальфі, Комо, Венеція, Капрі, Сардинія, Неаполь, Чінкве-Терре: який забере вас сьогодні? Гортайте до останнього кадру і напишіть улюблений. Збережіть для наступної поїздки і позначте того, з ким поїхали б.
+
+    Хочете такі кадри для свого бренду? mela.team
+  poll:
+    question: "Куди б ви поїхали на скутері?"
+    options: ["Амальфі", "Озеро Комо", "Венеція", "Капрі", "Сардинія", "Неаполь", "Чінкве-Терре"]

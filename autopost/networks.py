@@ -313,6 +313,25 @@ class LinkedIn:
 
 
 # ----------------------------------------------------------------- Telegram
+_TG_LINK_RE = None
+
+
+def _tg_link_entities(text: str) -> str:
+    """Explicit text_link entities for every mela.team mention (UTF-16 offsets, as Telegram requires).
+    A bare "mela.team" left to Telegram's auto-linking gave "Telegram can't open this link" (21.11, VARGEN)."""
+    import json, re
+    global _TG_LINK_RE
+    if _TG_LINK_RE is None:
+        _TG_LINK_RE = re.compile(r"(?<![\w@/.-])(?:https?://)?(?:www\.)?mela\.team(?:/[^\s)\]]*)?", re.I)
+    ents = []
+    for m in _TG_LINK_RE.finditer(text):
+        raw = m.group(0).rstrip(".,!?;:")
+        url = raw if raw.lower().startswith("http") else "https://" + raw
+        off = len(text[:m.start()].encode("utf-16-le")) // 2
+        ents.append({"type": "text_link", "offset": off, "length": len(raw.encode("utf-16-le")) // 2, "url": url})
+    return json.dumps(ents)
+
+
 class Telegram:
     """Telegram Bot API: posts to a channel where the bot is an admin."""
 
@@ -334,16 +353,17 @@ class Telegram:
             short = len(text) <= 1024
             with video.open("rb") as f:
                 body = _check(requests.post(self._api("sendVideo"),
-                                            data={"chat_id": chat, "caption": text if short else "", "supports_streaming": "true"},
+                                            data={"chat_id": chat, "caption": text if short else "", "supports_streaming": "true",
+                                                  "caption_entities": _tg_link_entities(text) if short else "[]"},
                                             files={"video": f}, timeout=300))
             if not short:  # long caption goes as a reply right under the video
                 vid = (body.get("result") or {}).get("message_id")
-                _check(requests.post(self._api("sendMessage"), data={"chat_id": chat, "text": text, "reply_to_message_id": vid}, timeout=TIMEOUT))
+                _check(requests.post(self._api("sendMessage"), data={"chat_id": chat, "text": text, "entities": _tg_link_entities(text), "reply_to_message_id": vid}, timeout=TIMEOUT))
         elif not imgs:
-            body = _check(requests.post(self._api("sendMessage"), data={"chat_id": chat, "text": text}, timeout=TIMEOUT))
+            body = _check(requests.post(self._api("sendMessage"), data={"chat_id": chat, "text": text, "entities": _tg_link_entities(text)}, timeout=TIMEOUT))
         elif len(imgs) == 1:
             with imgs[0].open("rb") as f:
-                body = _check(requests.post(self._api("sendPhoto"), data={"chat_id": chat, "caption": text},
+                body = _check(requests.post(self._api("sendPhoto"), data={"chat_id": chat, "caption": text, "caption_entities": _tg_link_entities(text)},
                                             files={"photo": f}, timeout=TIMEOUT))
         else:
             if len(imgs) > 10:
@@ -356,6 +376,7 @@ class Telegram:
                 item = {"type": "photo", "media": f"attach://{key}"}
                 if i == 0 and text:
                     item["caption"] = text
+                    item["caption_entities"] = json.loads(_tg_link_entities(text))
                 media.append(item)
             try:
                 body = _check(requests.post(self._api("sendMediaGroup"), data={"chat_id": chat, "media": json.dumps(media)},
