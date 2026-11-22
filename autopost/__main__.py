@@ -1,4 +1,4 @@
-"""CLI:  python -m autopost [check|prepare|run] [--dry-run] [--posts DIR]"""
+"""CLI:  python -m autopost [check|prepare|run|next] [--dry-run] [--posts DIR]"""
 from __future__ import annotations
 
 import argparse
@@ -10,7 +10,7 @@ import urllib.parse
 
 from PIL import Image
 
-from .core import MAX_ATTEMPTS, PostError, due_jobs, load_posts, now_utc
+from .core import MAX_ATTEMPTS, MIN_GAP_MINUTES, PostError, _last_published, due_jobs, load_posts, now_utc
 from .networks import ApiError, NotConfigured, Instagram, LinkedIn, Telegram, Threads, ThreadsVasyl
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -116,9 +116,29 @@ def cmd_run(posts_dir: pathlib.Path, dry: bool) -> int:
     return 1 if failed else 0
 
 
+def cmd_next(posts_dir: pathlib.Path) -> int:
+    """Seconds until the next throttled (@isaiev_vasyl) post may go out; prints nothing if none waits
+    or if the account's secret is still missing. Used by the drip workflow to run once an hour."""
+    import datetime as dt
+    posts, now = load_posts(posts_dir), now_utc()
+    waits = []
+    for net, gap in MIN_GAP_MINUTES.items():
+        pending = [p for p in posts if not p.draft and net in p.networks() and not p.is_done(net)]
+        if not pending or any("is not set" in p.net_state(net).get("last_error", "") for p in pending):
+            continue
+        ready = max(min(p.publish_at(net) for p in pending), now)
+        last = _last_published(posts, net)
+        if last:
+            ready = max(ready, last + dt.timedelta(minutes=gap))
+        waits.append(int((ready - now).total_seconds()))
+    if waits:
+        print(max(min(waits), 0))
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="autopost")
-    ap.add_argument("command", choices=["check", "prepare", "run"])
+    ap.add_argument("command", choices=["check", "prepare", "run", "next"])
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--posts", default=str(ROOT / "posts"))
     args = ap.parse_args(argv)
@@ -127,6 +147,8 @@ def main(argv=None) -> int:
         return cmd_prepare(posts_dir)
     if args.command == "check":
         return cmd_check(posts_dir)
+    if args.command == "next":
+        return cmd_next(posts_dir)
     return cmd_run(posts_dir, args.dry_run)
 
 

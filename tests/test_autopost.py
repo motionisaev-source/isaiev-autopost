@@ -183,3 +183,15 @@ def test_missing_secret_waits(env, monkeypatch):
     st = json.loads((posts / "w" / "published.json").read_text())
     assert st["threads"]["status"] == "published"
     assert "status" not in st["threads_vasyl"] and "attempts" not in st["threads_vasyl"]
+
+
+def test_next_wait(tmp_path, capsys, monkeypatch):
+    _yaml(tmp_path / "a", 'threads:\n  enabled: false\n  text: "A"\nthreads_vasyl:\n  publish_at: "2026-11-22 13:00"\n  text: "A"\n')
+    _yaml(tmp_path / "b", 'threads:\n  enabled: false\n  text: "B"\nthreads_vasyl:\n  publish_at: "2026-11-22 13:01"\n  text: "B"\n')
+    (tmp_path / "a" / "published.json").write_text(json.dumps({"threads_vasyl": {"status": "published", "at": "2026-11-22T12:30:00+00:00"}}))
+    monkeypatch.setattr(cli, "now_utc", lambda: dt.datetime(2026, 11, 22, 12, 45, tzinfo=dt.timezone.utc))
+    cli.cmd_next(tmp_path)
+    assert capsys.readouterr().out.strip() == str(40 * 60)
+    (tmp_path / "b" / "published.json").write_text(json.dumps({"threads_vasyl": {"last_error": "secret X is not set"}}))
+    cli.cmd_next(tmp_path)
+    assert capsys.readouterr().out.strip() == ""

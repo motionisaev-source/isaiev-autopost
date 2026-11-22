@@ -1,0 +1,32 @@
+name: drip
+
+# Waits until the next @isaiev_vasyl post may go out, then starts autopost.
+# Started by autopost itself while the queue is not empty (GitHub's cron fires only every few hours).
+on:
+  workflow_dispatch:
+    inputs:
+      wait:
+        description: "Seconds to wait before starting autopost"
+        default: "0"
+
+permissions:
+  actions: write
+
+concurrency:
+  group: drip
+  cancel-in-progress: true   # only the newest wait counts
+
+jobs:
+  wait-and-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Wait
+        run: |
+          W=${{ inputs.wait }}
+          [ "$W" -gt 4800 ] && W=4800
+          sleep $(( W + 60 ))
+      - name: Start autopost
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run autopost.yml --repo "$GITHUB_REPOSITORY" --ref main
