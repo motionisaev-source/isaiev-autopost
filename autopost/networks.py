@@ -386,3 +386,11 @@ class ThreadsVasyl(Threads):
 
     name = "threads_vasyl"
     env_prefix = "THREADS_VASYL"
+    username = os.environ.get("THREADS_VASYL_USERNAME", "isaiev_vasyl")
+
+    def publish(self, post: Post) -> dict:
+        # a token generated for the wrong account must never post there
+        me = _check(requests.get(f"{self.base}/me", params={"fields": "username", "access_token": self._token()}, timeout=TIMEOUT))
+        if (me.get("username") or "").lower() != self.username.lower():
+            raise NotConfigured(f"token belongs to @{me.get('username')}, expected @{self.username}")
+        return super().publish(post)

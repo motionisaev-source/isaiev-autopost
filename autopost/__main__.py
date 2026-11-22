@@ -124,7 +124,7 @@ def cmd_next(posts_dir: pathlib.Path) -> int:
     waits = []
     for net, gap in MIN_GAP_MINUTES.items():
         pending = [p for p in posts if not p.draft and net in p.networks() and not p.is_done(net)]
-        if not pending or any("is not set" in p.net_state(net).get("last_error", "") for p in pending):
+        if not pending or any(("is not set" in e or "expected @" in e) for e in (p.net_state(net).get("last_error", "") for p in pending)):
             continue
         ready = max(min(p.publish_at(net) for p in pending), now)
         last = _last_published(posts, net)
