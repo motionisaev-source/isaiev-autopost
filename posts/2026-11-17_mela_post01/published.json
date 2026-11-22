@@ -7,6 +7,6 @@
     "url": "https://www.threads.com/@isaiev_ai/post/Df2IGQAEQ6C"
   },
   "threads_vasyl": {
-    "last_error": "secret THREADS_VASYL_ACCESS_TOKEN is not set"
+    "last_error": "token belongs to @isaiev_ai, expected @isaiev_vasyl"
   }
 }
