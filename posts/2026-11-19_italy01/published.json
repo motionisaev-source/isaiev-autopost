@@ -1,0 +1,17 @@
+{
+  "threads": {
+    "status": "published",
+    "at": "2026-11-22T18:16:47+00:00",
+    "id": "18383621878238324",
+    "url": "https://www.threads.com/@isaiev_ai/post/DgDbaFfGXSI"
+  },
+  "threads_vasyl": {
+    "status": "published",
+    "at": "2026-11-22T18:17:03+00:00",
+    "id": "18477612349137103",
+    "url": "https://www.threads.com/@isaiev_vasyl/post/DgDbcRYmbFR"
+  },
+  "telegram": {
+    "last_error": "secret TELEGRAM_CHAT_ID is not set"
+  }
+}
