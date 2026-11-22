@@ -5,9 +5,5 @@
     "at": "2026-11-17T14:17:52+00:00",
     "id": "18117571004043214",
     "url": "https://www.threads.com/@isaiev_ai/post/Df2IGQAEQ6C"
-  },
-  "threads_vasyl": {
-    "status": "failed",
-    "last_error": "secret THREADS_VASYL_ACCESS_TOKEN is not set"
   }
 }

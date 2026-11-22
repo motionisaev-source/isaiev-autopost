@@ -14,6 +14,13 @@ DEFAULT_TZ = os.environ.get("AUTOPOST_TZ", "Europe/Rome")
 NETWORKS = ("instagram", "threads", "threads_vasyl", "linkedin", "telegram")
 # Extra accounts reuse the main block's content when their own block leaves it out.
 FALLBACK = {"threads_vasyl": "threads"}
+# Every Threads post scheduled from this moment on is mirrored to @isaiev_vasyl automatically
+# (owner asked 22.11). Older posts are mirrored only with an explicit `threads_vasyl:` block.
+# A post can opt out with `threads_vasyl: {enabled: false}`.
+AUTO_MIRROR = {"threads_vasyl": ("threads", os.environ.get("AUTOPOST_VASYL_FROM", "2026-11-22 13:00"))}
+# Minimum gap between two publications on the same extra account, and at most one per run,
+# so a backlog goes out one post per hour instead of all at once.
+MIN_GAP_MINUTES = {"threads_vasyl": int(os.environ.get("AUTOPOST_VASYL_GAP_MIN", "55"))}
 MAX_ATTEMPTS = int(os.environ.get("AUTOPOST_MAX_ATTEMPTS", "3"))
 STATE_FILE = "published.json"
 
@@ -40,7 +47,10 @@ class Post:
         return ZoneInfo(self.data.get("timezone", DEFAULT_TZ))
 
     def publish_at(self, network: str) -> dt.datetime:
-        raw = (self.data.get(network) or {}).get("publish_at") or self.data.get("publish_at")
+        raw = (self.data.get(network) or {}).get("publish_at")
+        if not raw and network in FALLBACK:
+            raw = (self.data.get(FALLBACK[network]) or {}).get("publish_at")
+        raw = raw or self.data.get("publish_at")
         if not raw:
             raise PostError(f"{self.name}: missing publish_at")
         if isinstance(raw, dt.datetime):
@@ -51,8 +61,23 @@ class Post:
             when = when.replace(tzinfo=self.tz())
         return when
 
+    def _enabled(self, n: str) -> bool:
+        return isinstance(self.data.get(n), dict) and self.data[n].get("enabled", True)
+
     def networks(self) -> list[str]:
-        return [n for n in NETWORKS if isinstance(self.data.get(n), dict) and self.data[n].get("enabled", True)]
+        nets = []
+        for n in NETWORKS:
+            if self._enabled(n):
+                nets.append(n)
+            elif n in AUTO_MIRROR and n not in self.data and self._enabled(AUTO_MIRROR[n][0]):
+                base, since = AUTO_MIRROR[n]
+                cutoff = dt.datetime.fromisoformat(since.replace(" ", "T", 1)).replace(tzinfo=self.tz())
+                try:
+                    if self.publish_at(base) >= cutoff:
+                        nets.append(n)
+                except PostError:
+                    pass
+        return nets
 
     def _cfg(self, network: str) -> dict:
         cfg = dict(self.data.get(network) or {})
@@ -123,6 +148,15 @@ def load_posts(root: pathlib.Path) -> list[Post]:
     return posts
 
 
+def _last_published(posts: list[Post], net: str):
+    times = []
+    for post in posts:
+        at = (post.state.get(net) or {}).get("at")
+        if (post.state.get(net) or {}).get("status") == "published" and at:
+            times.append(dt.datetime.fromisoformat(at))
+    return max(times) if times else None
+
+
 def due_jobs(posts: list[Post], now: dt.datetime) -> list[tuple[Post, str]]:
     jobs = []
     for post in posts:
@@ -133,6 +167,14 @@ def due_jobs(posts: list[Post], now: dt.datetime) -> list[tuple[Post, str]]:
                 continue
             if post.publish_at(net) <= now:
                 jobs.append((post, net))
+    # throttled accounts: oldest due post first, one per run, and only after the gap
+    for net, gap in MIN_GAP_MINUTES.items():
+        mine = sorted((j for j in jobs if j[1] == net), key=lambda j: (j[0].publish_at(net), j[0].name))
+        if not mine:
+            continue
+        last = _last_published(posts, net)
+        keep = [] if last and now - last < dt.timedelta(minutes=gap) else mine[:1]
+        jobs = [j for j in jobs if j[1] != net] + keep
     return jobs
 
 

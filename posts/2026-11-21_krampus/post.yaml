@@ -10,5 +10,5 @@ threads:
   publish_at: "2026-11-21 14:50"
   text: |
     The Krampus walks with Saint Nicholas and reminds you to behave. A real Alpine tradition from South Tyrol, Trentino and Tyrol. This year we sent him to an airport, a runway and a cheese cellar rave. Which scene wins? Reply with your pick and follow for more. mela.team #Krampus
-threads_vasyl:   # main account, owner asked 22.11
-  publish_at: "2026-11-22 16:20"
+threads_vasyl:   # backfill to @isaiev_vasyl, owner asked 22.11; goes out one per hour in this order
+  publish_at: "2026-11-22 13:03"

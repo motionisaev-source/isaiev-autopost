@@ -19,11 +19,21 @@ class ApiError(Exception):
     """Network/API problem. Retried on the next run."""
 
 
+class NotConfigured(PostError):
+    """A secret is missing. The post waits (no attempt is used) until the secret is added."""
+
+
 def _env(name: str) -> str:
     val = os.environ.get(name, "").strip()
     if not val:
-        raise PostError(f"secret {name} is not set")
+        raise NotConfigured(f"secret {name} is not set")
     return val
+
+
+def _norm(text: str) -> str:
+    """Text for duplicate detection: Threads turns the last #tag into a topic, so tags are dropped."""
+    text = re.sub(r"#\w+", " ", text or "")
+    return re.sub(r"\s+", " ", text).strip().lower()
 
 
 def _check(resp: requests.Response) -> dict:
@@ -164,11 +174,29 @@ class Threads:
         if not post.text(self.name) and not post.images(self.name):
             raise PostError(f"{self.name}: empty post")
 
+    def find_existing(self, text: str):
+        """Guard against double posting (two runs, or an error after Threads already published):
+        if the account's recent posts already hold this text, return that post instead of posting again."""
+        want = _norm(text)[:100]
+        if len(want) < 20:
+            return None
+        body = _check(requests.get(f"{self.base}/{self._user()}/threads",
+                                   params={"fields": "id,text,permalink,timestamp", "limit": 50, "access_token": self._token()},
+                                   timeout=TIMEOUT))
+        for item in body.get("data", []):
+            have = _norm(item.get("text", ""))
+            if have and (have.startswith(want) or want.startswith(have[:100])) and len(have) >= 20:
+                return {"id": item.get("id"), "url": item.get("permalink"), "note": "already on the account, not posted again"}
+        return None
+
     def publish(self, post: Post) -> dict:
         self.validate(post)
         imgs = post.images(self.name)
         text = post.text(self.name)
         video = post.video(self.name)
+        existing = self.find_existing(text)
+        if existing:
+            return existing
         if video:
             cid = self._create(media_type="VIDEO", video_url=self.media_url(post, video), text=text)
         elif not imgs:

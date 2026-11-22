@@ -10,5 +10,5 @@ linkedin:
   enabled: false
 telegram:
   enabled: false   # posted by local bot task MELA TG VARGEN 0830
-threads_vasyl:   # main account, owner asked 22.11
-  publish_at: "2026-11-22 17:50"
+threads_vasyl:   # backfill to @isaiev_vasyl, owner asked 22.11; goes out one per hour in this order
+  publish_at: "2026-11-22 13:02"

@@ -129,3 +129,57 @@ def test_threads_vasyl_optin_and_fallback(tmp_path):
     assert "threads_vasyl" in posts["pv"].networks()
     assert posts["pv"].text("threads_vasyl") == "Hello"
     assert "threads_vasyl" not in posts["po"].networks()
+
+
+def _yaml(d, text):
+    d.mkdir(parents=True)
+    (d / "post.yaml").write_text(text, encoding="utf-8")
+
+
+def test_vasyl_auto_mirror_for_new_posts_only(tmp_path):
+    _yaml(tmp_path / "old", 'threads:\n  publish_at: "2026-11-21 08:30"\n  text: "Old post"\n')
+    _yaml(tmp_path / "new", 'threads:\n  publish_at: "2026-11-23 08:30"\n  text: "New post"\n')
+    _yaml(tmp_path / "off", 'threads:\n  publish_at: "2026-11-23 08:30"\n  text: "No mirror"\nthreads_vasyl:\n  enabled: false\n')
+    posts = {p.name: p for p in load_posts(tmp_path)}
+    assert "threads_vasyl" not in posts["old"].networks()
+    assert "threads_vasyl" in posts["new"].networks()
+    assert posts["new"].publish_at("threads_vasyl") == posts["new"].publish_at("threads")
+    assert "threads_vasyl" not in posts["off"].networks()
+
+
+def test_vasyl_backlog_one_per_hour(tmp_path):
+    for i in range(3):
+        _yaml(tmp_path / f"b{i}", f'threads:\n  publish_at: "2026-11-01 10:00"\n  text: "T{i}"\n'
+                                  f'  enabled: false\nthreads_vasyl:\n  publish_at: "2026-11-22 13:0{i}"\n  text: "T{i}"\n')
+    now = dt.datetime(2026, 11, 22, 13, 0, tzinfo=dt.timezone.utc)
+    posts = load_posts(tmp_path)
+    assert [p.name for p, n in due_jobs(posts, now)] == ["b0"]
+    posts[0].state["threads_vasyl"] = {"status": "published", "at": now.isoformat()}
+    assert due_jobs(posts, now + dt.timedelta(minutes=30)) == []
+    assert [p.name for p, n in due_jobs(posts, now + dt.timedelta(minutes=60))] == ["b1"]
+
+
+def test_threads_duplicate_guard(env, monkeypatch):
+    posts = env / "posts"
+    make_post(posts, "dup", "2020-01-01 10:00", {"instagram": None, "linkedin": None,
+                                                   "threads": {"text": "Light first. Everything else second. mela.team #Marketing"}}, imgs=0)
+    created = []
+    monkeypatch.setattr(networks.requests, "post", lambda url, **k: created.append(url) or Resp({"id": "x"}))
+    monkeypatch.setattr(networks.requests, "get", lambda url, params=None, timeout=None: Resp(
+        {"data": [{"id": "77", "text": "Light first. Everything else second. mela.team Marketing", "permalink": "https://t/77"}]}))
+    assert cli.cmd_run(posts, dry=False) == 0
+    st = json.loads((posts / "dup" / "published.json").read_text())["threads"]
+    assert st["status"] == "published" and st["id"] == "77" and created == []
+
+
+def test_missing_secret_waits(env, monkeypatch):
+    posts = env / "posts"
+    make_post(posts, "w", "2020-01-01 10:00", {"instagram": None, "linkedin": None,
+                                                 "threads": {"text": "Hello world, this is a test post"}, "threads_vasyl": {}}, imgs=0)
+    monkeypatch.delenv("THREADS_VASYL_ACCESS_TOKEN", raising=False)
+    monkeypatch.setattr(networks.requests, "post", lambda url, **k: Resp({"id": "x"}))
+    monkeypatch.setattr(networks.requests, "get", lambda url, params=None, timeout=None: Resp({"data": [], "status": "FINISHED"}))
+    cli.cmd_run(posts, dry=False)
+    st = json.loads((posts / "w" / "published.json").read_text())
+    assert st["threads"]["status"] == "published"
+    assert "status" not in st["threads_vasyl"] and "attempts" not in st["threads_vasyl"]

@@ -11,7 +11,7 @@ import urllib.parse
 from PIL import Image
 
 from .core import MAX_ATTEMPTS, PostError, due_jobs, load_posts, now_utc
-from .networks import ApiError, Instagram, LinkedIn, Telegram, Threads, ThreadsVasyl
+from .networks import ApiError, NotConfigured, Instagram, LinkedIn, Telegram, Threads, ThreadsVasyl
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -96,6 +96,9 @@ def cmd_run(posts_dir: pathlib.Path, dry: bool) -> int:
             st.update(status="published", at=now_utc().isoformat(timespec="seconds"), **result)
             st.pop("last_error", None)
             lines.append(f"- ✅ {post.name} → {net} {result.get('url') or ''}")
+        except NotConfigured as e:  # waits for the secret, keeps its place in the queue
+            st["last_error"] = str(e)
+            lines.append(f"- ⏸ {post.name} → {net}: {e}")
         except PostError as e:
             st.update(status="failed", last_error=str(e))
             failed += 1
