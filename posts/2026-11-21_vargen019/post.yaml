@@ -10,5 +10,6 @@ linkedin:
   enabled: false
 telegram:
   enabled: false   # posted by local bot task MELA TG VARGEN 0830
-threads_vasyl:   # backfill to @isaiev_vasyl, owner asked 22.11; goes out one per hour in this order
+threads_vasyl:   # backfill to @isaiev_vasyl, owner asked 22.11; text without numbers (owner rule)
   publish_at: "2026-11-22 13:02"
+  text: "Case study: VARGEN. Make a watch feel rare in seconds, without a shoot. Result: one short film in wide and vertical formats for site, ads and Reels. Comment BRIEF for the breakdown. → mela.team"
