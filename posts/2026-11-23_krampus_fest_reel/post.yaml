@@ -1,0 +1,14 @@
+publish_at: "2026-11-23 10:30"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual (Reels video)
+linkedin:
+  enabled: false   # posted by Claude via Chrome
+telegram:
+  enabled: false   # video goes via PC scheduled task 'MELA Krampus Telegram 1030'
+threads:
+  publish_at: "2026-11-23 10:30"
+  text: |
+    Last week we sent the Krampus on a luxury trip with AI. This weekend we met the real ones: carved masks, real fur, cowbells, red smoke and fire in the crowd. No AI scenes this time, just a phone and an edit. Would you stand in the front row or run? mela.team
+threads_vasyl:
+  publish_at: "2026-11-23 10:30"
