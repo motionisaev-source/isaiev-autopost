@@ -29,7 +29,6 @@ threads:
     5. No colour decision
 
     Fix these and the same product looks twice as expensive. Which one do you see most often?
-<<<<<<< Updated upstream
 threads_vasyl:   # backfill to @isaiev_vasyl, owner asked 22.11; text without numbers (owner rule)
   publish_at: "2026-11-22 13:00"
   text: |
@@ -42,7 +41,6 @@ threads_vasyl:   # backfill to @isaiev_vasyl, owner asked 22.11; text without nu
     No colour decision
 
     Fix these and the same product looks far more expensive. Which one do you see most often?
-=======
 telegram:
   publish_at: "2026-11-23 12:30"
   text: |
@@ -53,4 +51,3 @@ telegram:
     Виправте це, і той самий продукт виглядатиме вдвічі дорожче. Яка помилка трапляється вам найчастіше? Пишіть у коментарях.
 
     Хочете преміальні візуали продукту? mela.team
->>>>>>> Stashed changes

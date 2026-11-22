@@ -35,3 +35,5 @@ telegram:
   poll:
     question: "Куди б ви поїхали на скутері?"
     options: ["Амальфі", "Озеро Комо", "Венеція", "Капрі", "Сардинія", "Неаполь", "Чінкве-Терре"]
+threads_vasyl:
+  enabled: false   # already on @isaiev_vasyl since 19.11, do not repost
