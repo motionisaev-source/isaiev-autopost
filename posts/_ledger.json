@@ -1,0 +1,149 @@
+{
+  "_note": "Published ledger, used by the duplicate gate (autopost/dedupe.py). Add an entry by hand for a post made outside autopost.",
+  "entries": [
+    {
+      "slug": "2026-11-17_mela_post01",
+      "network": "threads",
+      "hook": "your product photo looks cheap for five reasons, and none of them need a bigger ",
+      "at": "2026-11-17T14:17:52+00:00",
+      "id": "18117571004043214",
+      "url": "https://www.threads.com/@isaiev_ai/post/Df2IGQAEQ6C",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-18_gta_gameday",
+      "network": "threads",
+      "hook": "half the world took nov 19 off for gta 6. i'm one of them. out of office, in vic",
+      "at": "2026-11-17T23:59:22+00:00",
+      "id": "17903528241612555",
+      "url": "https://www.threads.com/@isaiev_ai/post/Df3KpNDFhKt",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-21_vargen019",
+      "network": "threads",
+      "hook": "a luxury watch commercial with no shoot. vargen is a spec film made entirely wit",
+      "at": "2026-11-21T07:39:26+00:00",
+      "id": "18505201882102147",
+      "url": "https://www.threads.com/@isaiev_ai/post/Df_tpgnTCCR",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-21_krampus",
+      "network": "threads",
+      "hook": "the krampus walks with saint nicholas and reminds you to behave. a real alpine t",
+      "at": "2026-11-21T14:45:43+00:00",
+      "id": "17937585960148028",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgAedq1Fubq",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-18_mela_post02",
+      "network": "threads",
+      "hook": "light first. everything else second. before props, colour or lens, decide where ",
+      "at": "2026-11-22T11:40:32+00:00",
+      "id": "18184738174429131",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgCuEP2FDe3",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-17_mela_post01",
+      "network": "threads_vasyl",
+      "hook": "why your product photo looks cheap, and none of the fixes need a bigger budget: ",
+      "at": "2026-11-22T12:51:40+00:00",
+      "id": "18100370198556470",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgC2NVXFgM-",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-21_vargen019",
+      "network": "threads_vasyl",
+      "hook": "case study: vargen. make a watch feel rare in seconds, without a shoot. result: ",
+      "at": "2026-11-22T13:48:52+00:00",
+      "id": "18384488437242719",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgC8uOKuaHx",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-21_krampus",
+      "network": "threads_vasyl",
+      "hook": "the krampus walks with saint nicholas and reminds you to behave. a real alpine t",
+      "at": "2026-11-22T14:46:00+00:00",
+      "id": "18117504446153952",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgDDSuPlGOa",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-18_mela_post02",
+      "network": "threads_vasyl",
+      "hook": "light first. everything else second. before props, colour or lens, decide where ",
+      "at": "2026-11-22T15:43:08+00:00",
+      "id": "18035594546910639",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgDJ1KnGsKI",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-19_italy01",
+      "network": "threads",
+      "hook": "piano della domenica: salta il traghetto, prendi la scooter. adesso galleggia. t",
+      "at": "2026-11-22T18:16:47+00:00",
+      "id": "18383621878238324",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgDbaFfGXSI",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-19_italy01",
+      "network": "threads_vasyl",
+      "hook": "piano della domenica: salta il traghetto, prendi la scooter. adesso galleggia. t",
+      "at": "2026-11-22T18:17:03+00:00",
+      "id": "18477612349137103",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgDbcRYmbFR",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-23_krampus_fest_reel",
+      "network": "threads_vasyl",
+      "hook": "last week we sent the krampus on a luxury trip with ai. this weekend we met the ",
+      "at": "2026-11-23T09:31:59+00:00",
+      "id": "18041822141839625",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgFEJsFFrme",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-23_krampus_fest_reel",
+      "network": "threads",
+      "hook": "last week we sent the krampus on a luxury trip with ai. this weekend we met the ",
+      "at": "2026-11-23T10:06:57+00:00",
+      "id": "18036893342903360",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgFIJoalbXB",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-23_serpens",
+      "network": "threads",
+      "hook": "serpens: a bracelet film with nothing but metal and light. macro, metal, light, ",
+      "at": "2026-11-23T10:07:10+00:00",
+      "id": "17999612967106869",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgFILVTlcgN",
+      "source": "published.json"
+    },
+    {
+      "slug": "2026-11-23_serpens",
+      "network": "threads_vasyl",
+      "hook": "serpens: a bracelet film with nothing but metal and light. macro, metal, light, ",
+      "at": "2026-11-23T10:30:18+00:00",
+      "id": "18112832231351957",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgFK0oJm-xd",
+      "source": "published.json"
+    },
+    {
+      "slug": "external:serpens-repost-2026-11-23",
+      "network": "threads",
+      "hook": "metal. light. nothing else. a gold serpent bracelet",
+      "at": "2026-11-23T11:10:00+00:00",
+      "id": null,
+      "url": null,
+      "source": "posted outside autopost (second SERPENS on @isaiev_ai, ~1h after autopost's)"
+    }
+  ]
+}

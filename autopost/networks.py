@@ -174,29 +174,25 @@ class Threads:
         if not post.text(self.name) and not post.images(self.name):
             raise PostError(f"{self.name}: empty post")
 
-    def find_existing(self, text: str):
-        """Guard against double posting (two runs, or an error after Threads already published):
-        if the account's recent posts already hold this text, return that post instead of posting again."""
-        want = _norm(text)[:100]
-        if len(want) < 20:
-            return None
+    def recent_posts(self, hours: int = 48) -> list[dict]:
+        """The account's own posts from the last `hours` (read by the duplicate gate before every publish)."""
+        from .dedupe import parse_ts
+        since = time.time() - hours * 3600
         body = _check(requests.get(f"{self.base}/{self._user()}/threads",
-                                   params={"fields": "id,text,permalink,timestamp", "limit": 50, "access_token": self._token()},
-                                   timeout=TIMEOUT))
+                                   params={"fields": "id,text,permalink,timestamp", "since": int(since), "limit": 100,
+                                           "access_token": self._token()}, timeout=TIMEOUT))
+        out = []
         for item in body.get("data", []):
-            have = _norm(item.get("text", ""))
-            if have and (have.startswith(want) or want.startswith(have[:100])) and len(have) >= 20:
-                return {"id": item.get("id"), "url": item.get("permalink"), "note": "already on the account, not posted again"}
-        return None
+            ts = parse_ts(item.get("timestamp"))
+            if ts is None or ts.timestamp() >= since:
+                out.append(item)
+        return out
 
     def publish(self, post: Post) -> dict:
         self.validate(post)
         imgs = post.images(self.name)
         text = post.text(self.name)
         video = post.video(self.name)
-        existing = self.find_existing(text)
-        if existing:
-            return existing
         if video:
             cid = self._create(media_type="VIDEO", video_url=self.media_url(post, video), text=text)
         elif not imgs:
@@ -409,9 +405,16 @@ class ThreadsVasyl(Threads):
     env_prefix = "THREADS_VASYL"
     username = os.environ.get("THREADS_VASYL_USERNAME", "isaiev_vasyl")
 
-    def publish(self, post: Post) -> dict:
-        # a token generated for the wrong account must never post there
+    def _verify_account(self) -> None:
+        # a token generated for the wrong account must never post there (or be read as its history)
         me = _check(requests.get(f"{self.base}/me", params={"fields": "username", "access_token": self._token()}, timeout=TIMEOUT))
         if (me.get("username") or "").lower() != self.username.lower():
             raise NotConfigured(f"token belongs to @{me.get('username')}, expected @{self.username}")
+
+    def recent_posts(self, hours: int = 48) -> list[dict]:
+        self._verify_account()
+        return super().recent_posts(hours)
+
+    def publish(self, post: Post) -> dict:
+        self._verify_account()
         return super().publish(post)
