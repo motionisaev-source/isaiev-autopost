@@ -1,0 +1,12 @@
+{
+  "threads": {
+    "attempts": 1,
+    "last_error": "ApiError: HTTP 400: {'error': {'message': 'An unknown error occurred', 'code': 1, 'type': 'OAuthException', 'error_subcode': 2207003, 'is_transient': False, 'error_user_msg': 'It takes too long to download the media.', 'error_user_title': 'Timeout', 'fbtrace_id': 'AQTGcvzveCaU4d2d3VJDSsI'}}"
+  },
+  "threads_vasyl": {
+    "status": "published",
+    "at": "2026-11-23T09:31:59+00:00",
+    "id": "18041822141839625",
+    "url": "https://www.threads.com/@isaiev_vasyl/post/DgFEJsFFrme"
+  }
+}
