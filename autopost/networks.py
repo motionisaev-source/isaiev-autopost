@@ -174,6 +174,19 @@ class Threads:
         if not post.text(self.name) and not post.images(self.name):
             raise PostError(f"{self.name}: empty post")
 
+    def delete(self, media_id: str, permalink: str = "") -> dict:
+        """Delete one post of this account (Threads API, needs threads_delete). When a permalink is given,
+        the post's own permalink must end with the same code, so a wrong id can never delete another post."""
+        if permalink:
+            info = _check(requests.get(f"{self.base}/{media_id}", params={"fields": "permalink", "access_token": self._token()}, timeout=TIMEOUT))
+            code = lambda u: (u or "").rstrip("/").rsplit("/", 1)[-1]
+            if code(info.get("permalink")) != code(permalink):
+                raise PostError(f"{self.name}: id {media_id} is {info.get('permalink')}, not {permalink}; nothing deleted")
+        body = _check(requests.delete(f"{self.base}/{media_id}", params={"access_token": self._token()}, timeout=TIMEOUT))
+        if isinstance(body, dict) and body.get("success") is False:
+            raise ApiError(f"{self.name}: delete refused: {body}")
+        return body if isinstance(body, dict) else {"raw": str(body)}
+
     def recent_posts(self, hours: int = 48) -> list[dict]:
         """The account's own posts from the last `hours` (read by the duplicate gate before every publish)."""
         from .dedupe import parse_ts
@@ -418,3 +431,7 @@ class ThreadsVasyl(Threads):
     def publish(self, post: Post) -> dict:
         self._verify_account()
         return super().publish(post)
+
+    def delete(self, media_id: str, permalink: str = "") -> dict:
+        self._verify_account()
+        return super().delete(media_id, permalink)

@@ -127,7 +127,7 @@ class Post:
 
     def is_done(self, network: str) -> bool:
         s = self.net_state(network)
-        return s.get("status") in ("published", "failed", "duplicate_blocked")
+        return s.get("status") in ("published", "failed", "duplicate_blocked", "deleted_duplicate")
 
     def save_state(self) -> None:
         (self.folder / STATE_FILE).write_text(

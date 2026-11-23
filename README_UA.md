@@ -108,3 +108,5 @@ TikTok і YouTube поки не підключені. Через власний 
 Свідомий репост: `allow_repost: true` у `post.yaml` (на верхньому рівні для всіх мереж або в блоці однієї мережі), потім прибрати `duplicate_blocked` із `published.json`, якщо пост уже заблоковано.
 
 `python -m autopost ledger` перебудовує реєстр із `published.json` (ручні записи лишаються).
+
+Прибрати дубль, що вже вийшов (Threads): додати запис у `posts/_delete.json` (`network`, `id`, `permalink`, `slug`, `reason`). Наступний запуск autopost перевірить, що id веде саме на цей permalink, видалить пост через Threads API і позначить його `deleted_duplicate` (повторно він не публікується).

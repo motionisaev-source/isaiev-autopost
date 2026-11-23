@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import pathlib
 import sys
@@ -84,15 +85,65 @@ def _cell(text) -> str:
     return str(text).replace("|", "\\|").replace("\n", " ")
 
 
+DELETE_FILE = "_delete.json"
+
+
+def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list) -> int:
+    """posts/_delete.json: duplicates to remove, [{network, id, permalink, slug?, reason}].
+    Each entry is done once; the post's published.json and the ledger are marked deleted_duplicate,
+    so the gate still sees it and autopost never posts it again."""
+    path = posts_dir / DELETE_FILE
+    if not path.exists():
+        return 0
+    data = json.loads(path.read_text(encoding="utf-8"))
+    by_name = {p.name: p for p in posts}
+    failed = 0
+    for item in data.get("delete", []):
+        if item.get("status") == "deleted":
+            continue
+        net, mid, label = item.get("network"), str(item.get("id") or ""), item.get("permalink") or item.get("id")
+        if dry:
+            rows.append((item.get("slug") or "-", net, f"[dry-run] would delete duplicate {label}"))
+            continue
+        try:
+            pub = PUBLISHERS[net]()
+            if not hasattr(pub, "delete") or not mid:
+                raise PostError(f"cannot delete on {net} (need a Threads network and an id)")
+            pub.delete(mid, item.get("permalink", ""))
+            item.update(status="deleted", at=now_utc().isoformat(timespec="seconds"))
+            item.pop("last_error", None)
+            print(f"DUPLICATE DELETED: {net} {label}")
+            rows.append((item.get("slug") or "-", net, f"🗑 DUPLICATE DELETED {label}"))
+            post = by_name.get(item.get("slug") or "")
+            if post and str(post.net_state(net).get("id")) == mid:
+                post.net_state(net).update(status="deleted_duplicate", deleted_at=item["at"], reason=item.get("reason", ""))
+                post.save_state()
+            for e in ledger.entries:
+                if e.get("network") == net and str(e.get("id")) == mid:
+                    e.update(deleted=item["at"], source=f"{e.get('source', '')}; deleted as duplicate")
+            ledger.save()
+        except (PostError, ApiError, Exception) as e:  # noqa: BLE001 — report the exact error, keep the entry
+            item["last_error"] = f"{type(e).__name__}: {e}"
+            item["attempts"] = item.get("attempts", 0) + 1
+            if item["attempts"] >= MAX_ATTEMPTS:
+                item["status"] = "failed"
+            failed += 1
+            print(f"DELETE FAILED: {net} {label}: {e}")
+            rows.append((item.get("slug") or "-", net, f"❌ delete failed {label}: {e}"))
+    if not dry:
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return failed
+
+
 def cmd_run(posts_dir: pathlib.Path, dry: bool) -> int:
     posts = load_posts(posts_dir)
+    ledger = dedupe.Ledger(posts_dir, posts)
+    rows = []
+    failed = run_deletions(posts_dir, posts, ledger, dry, rows)
     jobs = due_jobs(posts, now_utc())
-    if not jobs:
+    if not jobs and not rows:
         print("nothing due")
         return 0
-    ledger = dedupe.Ledger(posts_dir, posts)
-    failed = 0
-    rows = []
     for post, net in jobs:
         st = post.net_state(net)
         try:

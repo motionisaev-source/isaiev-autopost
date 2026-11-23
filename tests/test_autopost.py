@@ -300,3 +300,24 @@ def test_dry_run_reports_block_without_writing(env, monkeypatch, capsys):
     assert cli.cmd_run(posts, dry=True) == 0 and created == []
     assert "DUPLICATE BLOCKED" in capsys.readouterr().out
     assert not (posts / "d1" / "published.json").exists()
+
+
+def test_delete_queue(env, monkeypatch, capsys):
+    posts = env / "posts"
+    _text_post(posts, "dd", SERPENS)
+    (posts / "dd" / "published.json").write_text(json.dumps({"threads": {"status": "published", "id": "55", "url": "https://www.threads.com/@a/post/ABC"}}))
+    (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [
+        {"network": "threads", "id": "55", "permalink": "https://www.threads.com/@a/post/ABC", "slug": "dd"},
+        {"network": "threads", "id": "66", "permalink": "https://www.threads.com/@a/post/OTHER"}]}))
+    deleted = []
+    monkeypatch.setattr(networks.requests, "get", lambda url, params=None, timeout=None: Resp(
+        {"permalink": "https://www.threads.net/@a/post/ABC/" if url.endswith("/55") else "https://www.threads.net/@a/post/ZZZ"}))
+    monkeypatch.setattr(networks.requests, "delete", lambda url, params=None, timeout=None: deleted.append(url) or Resp({"success": True}))
+    assert cli.cmd_run(posts, dry=False) == 1  # the mismatched id is refused
+    assert deleted == ["https://graph.threads.net/v1.0/55"]
+    q = json.loads((posts / cli.DELETE_FILE).read_text())["delete"]
+    assert q[0]["status"] == "deleted" and "nothing deleted" in q[1]["last_error"]
+    assert json.loads((posts / "dd" / "published.json").read_text())["threads"]["status"] == "deleted_duplicate"
+    deleted.clear()
+    cli.cmd_run(posts, dry=False)
+    assert deleted == []  # done once; the post is never re-published either
