@@ -1,0 +1,14 @@
+publish_at: "2026-11-23 11:05"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual (Reels video)
+linkedin:
+  enabled: false   # posted by Claude via Chrome
+telegram:
+  enabled: false   # already sent via PC task, t.me/MELA_Lab/40
+threads:
+  publish_at: "2026-11-23 11:05"
+  text: |
+    SERPENS: a bracelet film with nothing but metal and light. Macro, metal, light, AI key frames, AI video shots, 15 seconds. Spec project for a fictional brand. Which shot would you open with? Follow for a new case every week. mela.team
+threads_vasyl:
+  publish_at: "2026-11-23 11:05"
