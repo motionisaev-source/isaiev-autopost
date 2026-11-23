@@ -7,9 +7,10 @@
       "permalink": "https://www.threads.com/@isaiev_ai/post/DgFILVTlcgN",
       "slug": "2026-11-23_serpens",
       "reason": "duplicate of DgFOD7vkZ5y (SERPENS video, kept); owner chose to delete the older one, 23.11",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'ASW32aGbAhVzf-2aYGDZfev'}}",
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'A6EMdo_SgVmeMf-NXv15xtq'}}",
       "attempts": 2,
-      "retry_note": "owner granted threads_delete 23.11 22:42 UTC"
+      "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
+      "status": "needs_permission"
     },
     {
       "network": "threads",
@@ -18,8 +19,9 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_ai/post/DgFjnYcERO_",
       "found": "2026-11-23T15:05:54+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AXng9Yhhsl26vSMF75IqQ6A'}}",
-      "retry_note": "owner granted threads_delete 23.11 22:42 UTC"
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'A7_HEXB5FDm1kozvbcwOs6x'}}",
+      "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
+      "status": "needs_permission"
     },
     {
       "network": "threads_vasyl",
@@ -28,8 +30,9 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_vasyl/post/DgFjsaSkVbt",
       "found": "2026-11-23T15:05:55+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AIlnoLi1n8nsLF8OdqCI4Wm'}}",
-      "retry_note": "owner granted threads_delete 23.11 22:42 UTC"
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AmBE2iU_8QYdxvGu4uigVtB'}}",
+      "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
+      "status": "needs_permission"
     },
     {
       "network": "threads",
@@ -38,8 +41,9 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_ai/post/DgFjnYcERO_",
       "found": "2026-11-23T22:12:47+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'A8Y37M-zeGAWaDFmO_edJC3'}}",
-      "retry_note": "owner granted threads_delete 23.11 22:42 UTC"
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AA95MPUll_Ch8BTQ2MC58xz'}}",
+      "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
+      "status": "needs_permission"
     },
     {
       "network": "threads_vasyl",
@@ -48,8 +52,9 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_vasyl/post/DgFjsaSkVbt",
       "found": "2026-11-23T22:12:48+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AJx-kPKFd-nct_bQLNlyrxV'}}",
-      "retry_note": "owner granted threads_delete 23.11 22:42 UTC"
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AXG28vemqple_0zAtvclV4c'}}",
+      "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
+      "status": "needs_permission"
     }
   ]
 }
