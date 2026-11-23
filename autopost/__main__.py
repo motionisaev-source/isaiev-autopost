@@ -99,8 +99,8 @@ def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list)
     by_name = {p.name: p for p in posts}
     failed = 0
     for item in data.get("delete", []):
-        if item.get("status") == "deleted":
-            continue
+        if item.get("status") in ("deleted", "failed", "needs_permission"):
+            continue  # done, given up, or waiting for a token with threads_delete (reset status to retry)
         net, mid, label = item.get("network"), str(item.get("id") or ""), item.get("permalink") or item.get("id")
         if dry:
             rows.append((item.get("slug") or "-", net, f"[dry-run] would delete duplicate {label}"))
@@ -124,6 +124,11 @@ def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list)
             ledger.save()
         except (PostError, ApiError, Exception) as e:  # noqa: BLE001 — report the exact error, keep the entry
             item["last_error"] = f"{type(e).__name__}: {e}"
+            if "does not have permission" in str(e):  # token lacks threads_delete: wait, don't fail every run
+                item["status"] = "needs_permission"
+                print(f"DELETE WAITING: {net} {label}: token has no threads_delete permission")
+                rows.append((item.get("slug") or "-", net, f"⏸ delete waits for threads_delete permission {label}"))
+                continue
             item["attempts"] = item.get("attempts", 0) + 1
             if item["attempts"] >= MAX_ATTEMPTS:
                 item["status"] = "failed"
