@@ -6,7 +6,9 @@
       "id": "17999612967106869",
       "permalink": "https://www.threads.com/@isaiev_ai/post/DgFILVTlcgN",
       "slug": "2026-11-23_serpens",
-      "reason": "duplicate of DgFOD7vkZ5y (SERPENS video, kept); owner chose to delete the older one, 23.11"
+      "reason": "duplicate of DgFOD7vkZ5y (SERPENS video, kept); owner chose to delete the older one, 23.11",
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AHHBtAkQa_sLL-LJWKrWSsJ'}}",
+      "attempts": 1
     }
   ]
 }
