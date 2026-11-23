@@ -5,5 +5,8 @@
     "id": "17999612967106869",
     "url": "https://www.threads.com/@isaiev_ai/post/DgFILVTlcgN"
   },
-  "threads_vasyl": {}
+  "threads_vasyl": {
+    "attempts": 1,
+    "last_error": "ApiError: HTTP 400: {'error': {'message': 'The requested resource does not exist', 'code': 24, 'type': 'OAuthException', 'error_subcode': 4279009, 'is_transient': False, 'error_user_msg': 'The media with id 17983204614136948 cannot be found.', 'error_user_title': 'Media Not Found', 'fbtrace_id': 'AwMmR-Hyn2pKnjYDJax54U1'}}"
+  }
 }
