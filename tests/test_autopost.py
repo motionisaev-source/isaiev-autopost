@@ -47,6 +47,8 @@ def env(monkeypatch, tmp_path):
         monkeypatch.setenv(k, v)
     monkeypatch.setattr(networks, "POLL_EVERY", 0)
     monkeypatch.setattr(cli, "ROOT", tmp_path)
+    # no real network in tests: the account scan reads Threads on every run
+    monkeypatch.setattr(networks.requests, "get", lambda *a, **k: Resp({}))
     return tmp_path
 
 
@@ -321,3 +323,57 @@ def test_delete_queue(env, monkeypatch, capsys):
     deleted.clear()
     cli.cmd_run(posts, dry=False)
     assert deleted == []  # done once; the post is never re-published either
+
+
+def test_case_and_shared_words():
+    assert dedupe.case_of(slug="2026-11-23_salt_mirror") == "salt-mirror"
+    assert dedupe.case_of(slug="2026-11-23_mela_post07") == "" and dedupe.case_of(slug="2026-11-19_italy01") == ""
+    assert dedupe.mentions_case("salt-mirror", "The SALT MIRROR set") and not dedupe.mentions_case("salt", "saltflats")
+    ig = "Metal. Light. Nothing else. A gold serpent bracelet #jewelry #aivideo"
+    assert "shared words" in dedupe.similar(SERPENS, ig)
+    assert dedupe.similar("A runway on a salt flat: the biggest mirror in the world.", "A runway on a salt flat… #saltflats")
+    assert dedupe.similar(SERPENS, "Light first. Everything else second. A new lamp campaign") is None
+
+
+def test_gate_blocks_instagram_crosspost_with_other_caption(env, monkeypatch):
+    posts = env / "posts"
+    _text_post(posts, "2026-11-23_serpens", SERPENS)
+    now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+0000")
+    created = _fake_threads(monkeypatch, [{"id": "9", "text": "Metal. Light. Nothing else. A gold serpent bracelet #jewelry",
+                                           "permalink": "https://t/9", "timestamp": now}])
+    assert cli.cmd_run(posts, dry=False) == 0 and created == []
+    st = json.loads((posts / "2026-11-23_serpens" / "published.json").read_text())["threads"]
+    assert st["status"] == "duplicate_blocked" and "shared words" in st["reason"]
+
+
+def test_gate_same_case_in_ledger(env, monkeypatch):
+    posts = env / "posts"
+    _text_post(posts, "2026-11-25_serpens_b", "Completely different words about a jewellery reel here.", case="serpens")
+    (posts / dedupe.LEDGER_FILE).write_text(json.dumps({"entries": [
+        {"slug": "2026-11-23_serpens", "network": "threads", "hook": "x"}]}), encoding="utf-8")
+    created = _fake_threads(monkeypatch)
+    assert cli.cmd_run(posts, dry=False) == 0 and created == []
+    assert "same case 'serpens'" in json.loads((posts / "2026-11-25_serpens_b" / "published.json").read_text())["threads"]["reason"]
+
+
+def test_scan_queues_newer_crosspost(env, monkeypatch, capsys):
+    posts = env / "posts"
+    posts.mkdir()
+    items = [{"id": "1", "text": "A runway on a salt flat: the biggest mirror in the world. Barefoot models.",
+              "permalink": "https://t/ours", "timestamp": "2026-11-23T14:06:55+0000"},
+             {"id": "2", "text": "A runway on a salt flat… #saltflats #fashionshow", "permalink": "https://t/ig",
+              "timestamp": "2026-11-23T14:47:00+0000"},
+             {"id": "3", "text": "Something else entirely, a new bike case", "timestamp": "2026-11-23T15:00:00+0000"},
+             {"id": "4", "text": SERPENS, "permalink": "https://t/old", "timestamp": "2026-11-23T10:07:10+0000"},
+             {"id": "5", "text": "Metal. Light. Nothing else. A gold serpent bracelet", "timestamp": "2026-11-23T11:10:00+0000"}]
+    (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [{"network": "threads", "id": "4", "status": "needs_permission"}]}))
+    monkeypatch.setattr(networks.Threads, "recent_posts", lambda self, hours=48: items)
+    monkeypatch.setattr(networks.requests, "delete", lambda *a, **k: Resp({"error": {"message": "Application does not have permission for this action"}}, 403))
+    monkeypatch.setattr(networks.requests, "get", lambda url, params=None, timeout=None: Resp({"permalink": "https://t/ig"}))
+    cli.cmd_run(posts, dry=False)
+    q = json.loads((posts / cli.DELETE_FILE).read_text())["delete"]
+    assert [i["id"] for i in q] == ["4", "2"]  # the IG copy; SERPENS pair skipped, the owner already chose which to drop
+    assert q[1]["status"] == "needs_permission" and "https://t/ours" in q[1]["reason"]
+    assert "DUPLICATE FOUND ON ACCOUNT" in capsys.readouterr().out
+    cli.cmd_run(posts, dry=False)
+    assert len(json.loads((posts / cli.DELETE_FILE).read_text())["delete"]) == 2  # not queued twice

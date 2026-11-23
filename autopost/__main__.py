@@ -140,10 +140,45 @@ def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list)
     return failed
 
 
+def scan_accounts(posts_dir: pathlib.Path, posts, dry: bool, rows: list) -> None:
+    """Look at the Threads accounts' last 48 h for copies made outside autopost (e.g. Instagram's automatic
+    "Share to Threads"): the newer post of a same-case pair is queued in posts/_delete.json."""
+    path = posts_dir / DELETE_FILE
+    data = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"delete": []}
+    queued = {str(i.get("id")) for i in data.get("delete", [])}
+    added = 0
+    for net in ("threads", "threads_vasyl"):
+        try:
+            items = PUBLISHERS[net]().recent_posts(dedupe.RECENT_HOURS)
+        except NotConfigured:
+            continue
+        except Exception as e:  # noqa: BLE001 — a failed scan must never stop publishing
+            print(f"scan {net}: {type(e).__name__}: {e}")
+            continue
+        for kept, copy, why in dedupe.find_account_duplicates(items, queued):
+            cid = str(copy.get("id"))
+            slug = next((p.name for p in posts if str((p.state.get(net) or {}).get("id")) == cid), "")
+            label = copy.get("permalink") or cid
+            print(f"DUPLICATE FOUND ON ACCOUNT: {net} {label} ({why}) -> queued for deletion")
+            rows.append((slug or "-", net, f"🔎 duplicate on the account, queued for deletion: {label} ({why})"))
+            if not dry:
+                data.setdefault("delete", []).append({
+                    "network": net, "id": cid, "permalink": copy.get("permalink", ""), "slug": slug,
+                    "reason": f"{why}; newer copy of {kept.get('permalink') or kept.get('id')}",
+                    "found": now_utc().isoformat(timespec="seconds")})
+                queued.add(cid)
+                added += 1
+    if added:
+        data.setdefault("_note", "Duplicates to delete. autopost run deletes each once (Threads API), checks the permalink "
+                                 "first, then marks it deleted here, in the post's published.json and in _ledger.json.")
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 def cmd_run(posts_dir: pathlib.Path, dry: bool) -> int:
     posts = load_posts(posts_dir)
     ledger = dedupe.Ledger(posts_dir, posts)
     rows = []
+    scan_accounts(posts_dir, posts, dry, rows)
     failed = run_deletions(posts_dir, posts, ledger, dry, rows)
     jobs = due_jobs(posts, now_utc())
     if not jobs and not rows:
@@ -177,7 +212,7 @@ def cmd_run(posts_dir: pathlib.Path, dry: bool) -> int:
             result = verdict[1] if verdict else publisher.publish(post)
             st.update(status="published", at=now_utc().isoformat(timespec="seconds"), **result)
             st.pop("last_error", None)
-            ledger.add(post.name, net, dedupe.hook(post.text(net)), at=st["at"], id=st.get("id"), url=st.get("url"),
+            ledger.add(post.name, net, dedupe.hook(post.text(net)), case=dedupe.case_of(post), at=st["at"], id=st.get("id"), url=st.get("url"),
                        source="found_on_account" if verdict else "autopost")
             ledger.save()
             rows.append((post.name, net, f"✅ {result.get('url') or ''} {result.get('note') or ''}".strip()))
