@@ -1,0 +1,15 @@
+case: PERLA
+publish_at: "2026-11-26 08:30"
+images: [01.jpg, 02.jpg, 03.jpg]
+instagram:
+  enabled: false   # manual, pack D:\AI\MELA-Content\manual-ig\2026-11-26_0830_PERLA
+linkedin:
+  enabled: false   # manual
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+threads:
+  publish_at: "2026-11-26 08:30"
+  text: |
+    PERLA. Pearls that look modern, not like grandma's box. Result: 3 campaign frames. Comment BRIEF for the breakdown. → mela.team #AdCampaign
+threads_vasyl:
+  publish_at: "2026-11-26 08:30"

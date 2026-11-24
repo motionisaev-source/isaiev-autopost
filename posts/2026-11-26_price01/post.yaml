@@ -1,0 +1,17 @@
+case: price01
+publish_at: "2026-11-26 19:00"
+images: [01.jpg, 02.jpg, 03.jpg, 04.jpg, 05.jpg, 06.jpg]
+instagram:
+  enabled: false   # manual, pack D:\AI\MELA-Content\manual-ig\2026-11-26_1900_PRICE01
+linkedin:
+  enabled: false   # manual
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+threads:
+  publish_at: "2026-11-26 19:00"
+  text: |
+    What a small budget buys at MELA Team: an AI photoshoot on any location, or campaign key visuals for ads and social. Fixed scope, files are yours.
+
+    Comment PRICE and we'll send the full sheet. mela.team #Marketing
+threads_vasyl:
+  publish_at: "2026-11-26 19:00"
