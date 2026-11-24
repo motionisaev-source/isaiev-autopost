@@ -1,0 +1,15 @@
+case: interval
+publish_at: "2026-11-25 08:30"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual (Reels video), pack D:\AI\MELA-Content\manual-ig\2026-11-25_0830_INTERVAL
+linkedin:
+  enabled: false   # manual (16:9 video)
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+threads:
+  publish_at: "2026-11-25 08:30"
+  text: |
+    INTERVAL. The time between two heartbeats, in one watch film. Which shot would you open with, the macro or the packshot? Comment BRIEF for the breakdown. → mela.team
+threads_vasyl:
+  publish_at: "2026-11-25 08:30"
