@@ -182,6 +182,36 @@
       "id": "18132258418868658",
       "url": "https://www.threads.com/@isaiev_vasyl/post/DgHbL5eFqAz",
       "source": "autopost"
+    },
+    {
+      "slug": "2026-11-17_mela_post01",
+      "network": "telegram",
+      "hook": "п'ять причин, чому ваше фото продукту виглядає дешево, і жодна не вимагає більшо",
+      "case": "",
+      "at": "2026-11-24T11:31:28+00:00",
+      "id": 60,
+      "url": null,
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-24_poll01",
+      "network": "threads",
+      "hook": "a or b: which one stops your scroll? a bookshop on a cliff, or a chandelier insi",
+      "case": "poll01",
+      "at": "2026-11-24T11:31:57+00:00",
+      "id": "18101163824440791",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgH2rQ9odTl",
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-24_poll01",
+      "network": "threads_vasyl",
+      "hook": "a or b: which one stops your scroll? a bookshop on a cliff, or a chandelier insi",
+      "case": "poll01",
+      "at": "2026-11-24T11:32:22+00:00",
+      "id": "18123127568061861",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgH2uWcIS3i",
+      "source": "autopost"
     }
   ]
 }
