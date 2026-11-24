@@ -1,0 +1,17 @@
+case: nb06
+publish_at: "2026-11-25 19:00"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual, pack D:\AI\MELA-Content\manual-ig\2026-11-25_1900_NB06
+linkedin:
+  enabled: false   # manual
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+threads:
+  publish_at: "2026-11-25 19:00"
+  text: |
+    Your museum campaign, without a shoot. A dinosaur at school break time, made with no studio and no crew.
+
+    Comment BRIEF and we'll tell you how it would work for your exhibition. mela.team #Education
+threads_vasyl:
+  publish_at: "2026-11-25 19:00"
