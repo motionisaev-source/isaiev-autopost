@@ -1,0 +1,15 @@
+case: bastel
+publish_at: "2026-11-24 08:30"
+images: [01.jpg]
+instagram:
+  enabled: false   # manual (Reels video), pack sent to the bot
+linkedin:
+  enabled: false   # LinkedIn page gets BASTEL as LI-P02 carousel on 01.12
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+threads:
+  publish_at: "2026-11-24 08:30"
+  text: |
+    BASTEL. The first cut looked blurry and the face kept changing, so we rebuilt every shot into a sharp 4K brand film. Spec project for a fictional brand. Which shot would you open with? Comment BRIEF and we'll send you the breakdown. mela.team
+threads_vasyl:
+  publish_at: "2026-11-24 08:30"
