@@ -30,9 +30,10 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_vasyl/post/DgFjsaSkVbt",
       "found": "2026-11-23T15:05:55+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AmBE2iU_8QYdxvGu4uigVtB'}}",
       "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
-      "status": "needs_permission"
+      "status": "deleted",
+      "at": "2026-11-25T17:20:00+00:00",
+      "note": "deleted by hand in Threads web (owner approved 25.11 'якщо є зайва копія, прибирай')"
     },
     {
       "network": "threads",
@@ -52,9 +53,10 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_vasyl/post/DgFjsaSkVbt",
       "found": "2026-11-23T22:12:48+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AXG28vemqple_0zAtvclV4c'}}",
       "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
-      "status": "needs_permission"
+      "status": "deleted",
+      "at": "2026-11-25T17:20:00+00:00",
+      "note": "deleted by hand in Threads web (owner approved 25.11 'якщо є зайва копія, прибирай')"
     },
     {
       "network": "threads",
@@ -73,8 +75,9 @@
       "slug": "",
       "reason": "same case, shared words: heartbeats, time, watch; newer copy of https://www.threads.com/@isaiev_vasyl/post/DgKABCPFgjC",
       "found": "2026-11-25T09:38:13+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AhAdmVfcMMNFW94eElkdW6W'}}",
-      "status": "needs_permission"
+      "status": "deleted",
+      "at": "2026-11-25T17:20:00+00:00",
+      "note": "deleted by hand in Threads web (owner approved 25.11 'якщо є зайва копія, прибирай')"
     },
     {
       "network": "threads",
