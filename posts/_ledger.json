@@ -232,6 +232,26 @@
       "id": "18020314850747217",
       "url": "https://www.threads.com/@isaiev_vasyl/post/DgIjU_3G63Y",
       "source": "autopost"
+    },
+    {
+      "slug": "2026-11-25_interval",
+      "network": "threads",
+      "hook": "interval. the time between two heartbeats, in one watch film. comment brief and ",
+      "case": "interval",
+      "at": "2026-11-25T07:31:50+00:00",
+      "id": "17988817593065397",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgJ__eXlph_",
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-25_interval",
+      "network": "threads_vasyl",
+      "hook": "interval. the time between two heartbeats, in one watch film. comment brief and ",
+      "case": "interval",
+      "at": "2026-11-25T07:32:04+00:00",
+      "id": "18130181545958966",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgKABCPFgjC",
+      "source": "autopost"
     }
   ]
 }
