@@ -1,5 +1,5 @@
 {
-  "_note": "Duplicates to delete. autopost run deletes each once (Threads API), checks the permalink first, then marks it deleted here, in the post's published.json and in _ledger.json.",
+  "_note": "FROZEN 25.11 by owner: only 100% identical duplicates (same text and same media) may ever be deleted. Entries here are not deleted unless status is empty and they are proven identical.",
   "delete": [
     {
       "network": "threads",
@@ -7,10 +7,10 @@
       "permalink": "https://www.threads.com/@isaiev_ai/post/DgFILVTlcgN",
       "slug": "2026-11-23_serpens",
       "reason": "duplicate of DgFOD7vkZ5y (SERPENS video, kept); owner chose to delete the older one, 23.11",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'A6EMdo_SgVmeMf-NXv15xtq'}}",
       "attempts": 2,
       "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
-      "status": "needs_permission"
+      "status": "keep",
+      "note": "frozen 25.11: owner allows deleting only 100% identical duplicates; this one is not"
     },
     {
       "network": "threads",
@@ -42,9 +42,9 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_ai/post/DgFjnYcERO_",
       "found": "2026-11-23T22:12:47+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AA95MPUll_Ch8BTQ2MC58xz'}}",
       "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
-      "status": "needs_permission"
+      "status": "keep",
+      "note": "frozen 25.11: owner allows deleting only 100% identical duplicates; this one is not"
     },
     {
       "network": "threads_vasyl",
@@ -66,7 +66,7 @@
       "reason": "same case, shared words: heartbeats, time, watch; newer copy of https://www.threads.com/@isaiev_ai/post/DgJ__eXlph_",
       "found": "2026-11-25T09:38:13+00:00",
       "status": "keep",
-      "note": "keep: sole INTERVAL on @isaiev_ai since the autopost original DgJ__eXlph_ was deleted by hand 25.11"
+      "note": "frozen 25.11: owner allows deleting only 100% identical duplicates; this one is not"
     },
     {
       "network": "threads_vasyl",
@@ -86,8 +86,8 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_ai/post/DgKb0kTDTl_",
       "found": "2026-11-25T12:54:00+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AZt0Qobb33QDMYV8WsdwYjU'}}",
-      "status": "needs_permission"
+      "status": "keep",
+      "note": "frozen 25.11: owner allows deleting only 100% identical duplicates; this one is not"
     }
   ]
 }
