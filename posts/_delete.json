@@ -75,6 +75,16 @@
       "found": "2026-11-25T09:38:13+00:00",
       "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AhAdmVfcMMNFW94eElkdW6W'}}",
       "status": "needs_permission"
+    },
+    {
+      "network": "threads",
+      "id": "18200884108380390",
+      "permalink": "https://www.threads.com/@isaiev_ai/post/DgKb6VGkvIU",
+      "slug": "",
+      "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_ai/post/DgKb0kTDTl_",
+      "found": "2026-11-25T12:54:00+00:00",
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AZt0Qobb33QDMYV8WsdwYjU'}}",
+      "status": "needs_permission"
     }
   ]
 }
