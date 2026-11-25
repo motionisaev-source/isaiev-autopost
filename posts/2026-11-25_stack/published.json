@@ -1,0 +1,14 @@
+{
+  "threads": {
+    "status": "published",
+    "at": "2026-11-25T11:32:25+00:00",
+    "id": "18120424939823501",
+    "url": "https://www.threads.com/@isaiev_ai/post/DgKbhg6m4Dt"
+  },
+  "threads_vasyl": {
+    "status": "duplicate_blocked",
+    "at": "2026-11-25T11:32:26+00:00",
+    "reason": "names the case 'stack', as a post on the account (2026-11-25T11:27:20+0000)",
+    "duplicate_of": "https://www.threads.com/@isaiev_vasyl/post/DgKa9hzDQXL"
+  }
+}
