@@ -330,7 +330,7 @@ class Threads:
         from .dedupe import parse_ts
         since = time.time() - hours * 3600
         body = _check(requests.get(f"{self.base}/{self._user()}/threads",
-                                   params={"fields": "id,text,permalink,timestamp", "since": int(since), "limit": 100,
+                                   params={"fields": "id,text,permalink,timestamp,media_type", "since": int(since), "limit": 100,
                                            "access_token": self._token()}, timeout=TIMEOUT))
         out = []
         for item in body.get("data", []):

@@ -220,7 +220,7 @@ def _fake_threads(monkeypatch, on_account=()):
     monkeypatch.setattr(networks.requests, "post", lambda url, **k: created.append(url) or Resp({"id": "new1"}))
 
     def get(url, params=None, timeout=None):
-        if (params or {}).get("fields") == "id,text,permalink,timestamp":
+        if (params or {}).get("fields", "").startswith("id,text,permalink,timestamp"):
             return Resp({"data": list(on_account)})
         if (params or {}).get("fields") == "permalink":
             return Resp({"permalink": "https://t/new1"})
@@ -356,27 +356,37 @@ def test_gate_same_case_in_ledger(env, monkeypatch):
     assert "same case 'serpens'" in json.loads((posts / "2026-11-25_serpens_b" / "published.json").read_text())["threads"]["reason"]
 
 
-def test_scan_queues_newer_crosspost(env, monkeypatch, capsys):
+def test_scan_queues_only_identical_duplicates(env, monkeypatch, capsys):
+    """Owner 25.11: only a 100% identical post (same text, same media type) is a duplicate to remove."""
     posts = env / "posts"
     posts.mkdir()
-    items = [{"id": "1", "text": "A runway on a salt flat: the biggest mirror in the world. Barefoot models.",
-              "permalink": "https://t/ours", "timestamp": "2026-11-23T14:06:55+0000"},
-             {"id": "2", "text": "A runway on a salt flat… #saltflats #fashionshow", "permalink": "https://t/ig",
-              "timestamp": "2026-11-23T14:47:00+0000"},
-             {"id": "3", "text": "Something else entirely, a new bike case", "timestamp": "2026-11-23T15:00:00+0000"},
-             {"id": "4", "text": SERPENS, "permalink": "https://t/old", "timestamp": "2026-11-23T10:07:10+0000"},
-             {"id": "5", "text": "Metal. Light. Nothing else. A gold serpent bracelet", "timestamp": "2026-11-23T11:10:00+0000"}]
-    (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [{"network": "threads", "id": "4", "status": "needs_permission"}]}))
+    same = "A runway on a salt flat: the biggest mirror in the world. #saltflats"
+    items = [{"id": "1", "text": same, "media_type": "CAROUSEL_ALBUM", "permalink": "https://t/a", "timestamp": "2026-11-23T14:06:55+0000"},
+             {"id": "2", "text": same, "media_type": "CAROUSEL_ALBUM", "permalink": "https://t/b", "timestamp": "2026-11-23T14:47:00+0000"},
+             {"id": "3", "text": same, "media_type": "VIDEO", "permalink": "https://t/c", "timestamp": "2026-11-23T15:00:00+0000"},
+             {"id": "4", "text": same + " Comment PROMPT.", "media_type": "CAROUSEL_ALBUM", "timestamp": "2026-11-23T15:10:00+0000"},
+             {"id": "5", "text": SERPENS, "media_type": "TEXT_POST", "timestamp": "2026-11-23T10:07:10+0000"},
+             {"id": "6", "text": "Metal. Light. Nothing else. A gold serpent bracelet", "media_type": "VIDEO", "timestamp": "2026-11-23T11:10:00+0000"}]
     monkeypatch.setattr(networks.Threads, "recent_posts", lambda self, hours=48: items)
     monkeypatch.setattr(networks.requests, "delete", lambda *a, **k: Resp({"error": {"message": "Application does not have permission for this action"}}, 403))
-    monkeypatch.setattr(networks.requests, "get", lambda url, params=None, timeout=None: Resp({"permalink": "https://t/ig"}))
+    monkeypatch.setattr(networks.requests, "get", lambda url, params=None, timeout=None: Resp({"permalink": "https://t/b"}))
     cli.cmd_run(posts, dry=False)
     q = json.loads((posts / cli.DELETE_FILE).read_text())["delete"]
-    assert [i["id"] for i in q] == ["4", "2"]  # the IG copy; SERPENS pair skipped, the owner already chose which to drop
-    assert q[1]["status"] == "needs_permission" and "https://t/ours" in q[1]["reason"]
+    assert [i["id"] for i in q] == ["2"]  # only the exact copy; other media type, longer text, other caption all stay
+    assert "https://t/a" in q[0]["reason"]
     assert "DUPLICATE FOUND ON ACCOUNT" in capsys.readouterr().out
     cli.cmd_run(posts, dry=False)
-    assert len(json.loads((posts / cli.DELETE_FILE).read_text())["delete"]) == 2  # not queued twice
+    assert len(json.loads((posts / cli.DELETE_FILE).read_text())["delete"]) == 1
+
+
+def test_keep_entries_are_never_deleted(env, monkeypatch):
+    posts = env / "posts"
+    posts.mkdir()
+    (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [{"network": "threads", "id": "9", "status": "keep"}]}))
+    called = []
+    monkeypatch.setattr(networks.requests, "delete", lambda *a, **k: called.append(a) or Resp({"success": True}))
+    cli.cmd_run(posts, dry=False)
+    assert called == []
 
 
 def test_facebook_and_reels(env, monkeypatch):

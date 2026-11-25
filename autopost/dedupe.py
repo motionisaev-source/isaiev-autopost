@@ -186,8 +186,20 @@ def parse_ts(raw: str):
         return None
 
 
+def identical(a: dict, b: dict):
+    """Owner's rule (25.11): only a 100% identical duplicate may be removed: the same full text
+    (whitespace aside) and the same media type. A post that differs even a little is not a duplicate."""
+    ta = re.sub(r"\s+", " ", (a.get("text") or "")).strip()
+    tb = re.sub(r"\s+", " ", (b.get("text") or "")).strip()
+    if not ta or ta != tb:
+        return None
+    if (a.get("media_type") or "") != (b.get("media_type") or ""):
+        return None
+    return "identical text and media type"
+
+
 def find_account_duplicates(items: list[dict], queued=()) -> list[tuple[dict, dict, str]]:
-    """Pairs (kept, newer copy, why) among one account's recent posts. The newer copy is the one to remove.
+    """Pairs (kept, newer copy, why) of 100% identical posts on one account. The newer copy is the one to remove.
     A pair is skipped when either post is already queued for deletion (e.g. the owner chose to drop the older one)."""
     def ts(item):
         t = parse_ts(item.get("timestamp"))
@@ -200,8 +212,7 @@ def find_account_duplicates(items: list[dict], queued=()) -> list[tuple[dict, di
         for older in posts[:n]:
             if str(older.get("id")) in gone:
                 continue
-            a, b = older.get("text", ""), newer.get("text", "")
-            why = similar(a, b) or similar(b, a)
+            why = identical(older, newer)
             if why:
                 out.append((older, newer, why))
                 gone.add(str(newer.get("id")))
