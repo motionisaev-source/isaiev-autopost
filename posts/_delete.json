@@ -19,9 +19,9 @@
       "slug": "",
       "reason": "same caption opening; newer copy of https://www.threads.com/@isaiev_ai/post/DgFjnYcERO_",
       "found": "2026-11-23T15:05:54+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'A7_HEXB5FDm1kozvbcwOs6x'}}",
       "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
-      "status": "needs_permission"
+      "status": "deleted",
+      "note": "already deleted by hand (owner) 25.11"
     },
     {
       "network": "threads_vasyl",
@@ -65,8 +65,8 @@
       "slug": "",
       "reason": "same case, shared words: heartbeats, time, watch; newer copy of https://www.threads.com/@isaiev_ai/post/DgJ__eXlph_",
       "found": "2026-11-25T09:38:13+00:00",
-      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AwugbcT2JKYL4n6QqdwT0fk'}}",
-      "status": "needs_permission"
+      "status": "keep",
+      "note": "keep: sole INTERVAL on @isaiev_ai since the autopost original DgJ__eXlph_ was deleted by hand 25.11"
     },
     {
       "network": "threads_vasyl",

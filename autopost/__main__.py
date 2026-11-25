@@ -100,7 +100,7 @@ def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list)
     by_name = {p.name: p for p in posts}
     failed = 0
     for item in data.get("delete", []):
-        if item.get("status") in ("deleted", "failed", "needs_permission"):
+        if item.get("status") in ("deleted", "failed", "needs_permission", "keep"):
             continue  # done, given up, or waiting for a token with threads_delete (reset status to retry)
         net, mid, label = item.get("network"), str(item.get("id") or ""), item.get("permalink") or item.get("id")
         if dry:
