@@ -55,6 +55,26 @@
       "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AXG28vemqple_0zAtvclV4c'}}",
       "retry_note": "owner granted threads_delete 23.11 22:42 UTC",
       "status": "needs_permission"
+    },
+    {
+      "network": "threads",
+      "id": "18362403262169675",
+      "permalink": "https://www.threads.com/@isaiev_ai/post/DgKFi4uEYWD",
+      "slug": "",
+      "reason": "same case, shared words: heartbeats, time, watch; newer copy of https://www.threads.com/@isaiev_ai/post/DgJ__eXlph_",
+      "found": "2026-11-25T09:38:13+00:00",
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AwugbcT2JKYL4n6QqdwT0fk'}}",
+      "status": "needs_permission"
+    },
+    {
+      "network": "threads_vasyl",
+      "id": "17967477576247590",
+      "permalink": "https://www.threads.com/@isaiev_vasyl/post/DgKF48sDZ8d",
+      "slug": "",
+      "reason": "same case, shared words: heartbeats, time, watch; newer copy of https://www.threads.com/@isaiev_vasyl/post/DgKABCPFgjC",
+      "found": "2026-11-25T09:38:13+00:00",
+      "last_error": "ApiError: HTTP 403: {'error': {'message': 'Application does not have permission for this action', 'code': 10, 'type': 'THApiException', 'fbtrace_id': 'AhAdmVfcMMNFW94eElkdW6W'}}",
+      "status": "needs_permission"
     }
   ]
 }
