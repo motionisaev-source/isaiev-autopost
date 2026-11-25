@@ -89,6 +89,39 @@ def _cell(text) -> str:
 DELETE_FILE = "_delete.json"
 
 
+def check_evidence(pub, item: dict):
+    """Proof, collected live right before a delete, that the post is a 100% identical repeat (owner 25.11).
+    Needs: the kept original recorded and still live, the same full text and the same media type,
+    and the copy not having more views or likes than the original. Anything missing -> not proven."""
+    ev = {"checked_at": now_utc().isoformat(timespec="seconds")}
+    kept_id = str(item.get("kept_id") or "")
+    if not kept_id:
+        ev["verdict"] = "no original recorded for this entry"
+        return False, ev
+    try:
+        copy, kept = pub.get_post(str(item.get("id"))), pub.get_post(kept_id)
+    except Exception as e:  # noqa: BLE001
+        ev["verdict"] = f"could not read both posts: {type(e).__name__}: {str(e)[:160]}"
+        return False, ev
+    ev.update(kept=kept.get("permalink") or kept_id, copy=copy.get("permalink") or item.get("id"),
+              kept_media=kept.get("media_type"), copy_media=copy.get("media_type"),
+              same_text=dedupe.identical({"text": kept.get("text")}, {"text": copy.get("text")}) is not None,
+              kept_time=kept.get("timestamp"), copy_time=copy.get("timestamp"))
+    if not dedupe.identical(kept, copy):
+        ev["verdict"] = "text or media type differ"
+        return False, ev
+    if (copy.get("timestamp") or "") <= (kept.get("timestamp") or ""):
+        ev["verdict"] = "the copy is not newer than the original"
+        return False, ev
+    cv, kv = pub.views(str(item.get("id"))), pub.views(kept_id)
+    ev.update(copy_stats=cv, kept_stats=kv)
+    if cv and kv and any((cv.get(k) or 0) > (kv.get(k) or 0) for k in ("views", "likes")):
+        ev["verdict"] = "the copy has more views or likes than the original"
+        return False, ev
+    ev["verdict"] = "proven identical duplicate"
+    return True, ev
+
+
 def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list) -> int:
     """posts/_delete.json: duplicates to remove, [{network, id, permalink, slug?, reason}].
     Each entry is done once; the post's published.json and the ledger are marked deleted_duplicate,
@@ -110,6 +143,13 @@ def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list)
             pub = PUBLISHERS[net]()
             if not hasattr(pub, "delete") or not mid:
                 raise PostError(f"cannot delete on {net} (need a Threads network and an id)")
+            ok, evidence = check_evidence(pub, item)
+            item["evidence"] = evidence
+            if not ok:  # owner 25.11: no proof that it is the same post -> never touch it
+                item.update(status="keep", note="evidence check failed: " + evidence.get("verdict", ""))
+                print(f"DELETE REFUSED (no evidence): {net} {label}: {evidence.get('verdict')}")
+                rows.append((item.get("slug") or "-", net, f"🛡 kept, not a proven duplicate: {label} ({evidence.get('verdict')})"))
+                continue
             pub.delete(mid, item.get("permalink", ""))
             item.update(status="deleted", at=now_utc().isoformat(timespec="seconds"))
             item.pop("last_error", None)
@@ -165,6 +205,7 @@ def scan_accounts(posts_dir: pathlib.Path, posts, dry: bool, rows: list) -> None
             if not dry:
                 data.setdefault("delete", []).append({
                     "network": net, "id": cid, "permalink": copy.get("permalink", ""), "slug": slug,
+                    "kept_id": str(kept.get("id")), "kept_permalink": kept.get("permalink", ""),
                     "reason": f"{why}; newer copy of {kept.get('permalink') or kept.get('id')}",
                     "found": now_utc().isoformat(timespec="seconds")})
                 queued.add(cid)

@@ -305,25 +305,56 @@ def test_dry_run_reports_block_without_writing(env, monkeypatch, capsys):
 
 
 def test_delete_queue(env, monkeypatch, capsys):
+    """Deletes only with live proof: original recorded and live, same text, same media type, copy newer."""
     posts = env / "posts"
     _text_post(posts, "dd", SERPENS)
     (posts / "dd" / "published.json").write_text(json.dumps({"threads": {"status": "published", "id": "55", "url": "https://www.threads.com/@a/post/ABC"}}))
     (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [
-        {"network": "threads", "id": "55", "permalink": "https://www.threads.com/@a/post/ABC", "slug": "dd"},
-        {"network": "threads", "id": "66", "permalink": "https://www.threads.com/@a/post/OTHER"}]}))
+        {"network": "threads", "id": "55", "permalink": "https://www.threads.com/@a/post/ABC", "slug": "dd", "kept_id": "50"},
+        {"network": "threads", "id": "66", "permalink": "https://www.threads.com/@a/post/DIF", "kept_id": "50"},
+        {"network": "threads", "id": "77", "permalink": "https://www.threads.com/@a/post/OLD"}]}))
+    live = {"50": {"id": "50", "text": SERPENS, "media_type": "TEXT_POST", "permalink": "https://t/orig", "timestamp": "2026-11-23T10:00:00+0000"},
+            "55": {"id": "55", "text": SERPENS, "media_type": "TEXT_POST", "permalink": "https://www.threads.net/@a/post/ABC/", "timestamp": "2026-11-23T11:00:00+0000"},
+            "66": {"id": "66", "text": SERPENS + " more", "media_type": "TEXT_POST", "permalink": "https://www.threads.com/@a/post/DIF", "timestamp": "2026-11-23T12:00:00+0000"}}
     deleted = []
-    monkeypatch.setattr(networks.requests, "get", lambda url, params=None, timeout=None: Resp(
-        {"permalink": "https://www.threads.net/@a/post/ABC/" if url.endswith("/55") else "https://www.threads.net/@a/post/ZZZ"}))
+
+    def get(url, params=None, timeout=None):
+        if url.endswith("/insights"):
+            return Resp({"data": []})
+        return Resp(live[url.rsplit("/", 1)[-1]])
+    monkeypatch.setattr(networks.requests, "get", get)
     monkeypatch.setattr(networks.requests, "delete", lambda url, params=None, timeout=None: deleted.append(url) or Resp({"success": True}))
-    assert cli.cmd_run(posts, dry=False) == 1  # the mismatched id is refused
-    assert deleted == ["https://graph.threads.net/v1.0/55"]
-    q = json.loads((posts / cli.DELETE_FILE).read_text())["delete"]
-    assert q[0]["status"] == "deleted" and "nothing deleted" in q[1]["last_error"]
+    cli.cmd_run(posts, dry=False)
+    assert deleted == ["https://graph.threads.net/v1.0/55"]  # only the proven identical copy
+    q = {i["id"]: i for i in json.loads((posts / cli.DELETE_FILE).read_text())["delete"]}
+    assert q["55"]["status"] == "deleted" and q["55"]["evidence"]["verdict"] == "proven identical duplicate"
+    assert q["66"]["status"] == "keep" and "differ" in q["66"]["evidence"]["verdict"]
+    assert q["77"]["status"] == "keep" and "no original" in q["77"]["evidence"]["verdict"]
     assert json.loads((posts / "dd" / "published.json").read_text())["threads"]["status"] == "deleted_duplicate"
     deleted.clear()
     cli.cmd_run(posts, dry=False)
-    assert deleted == []  # done once; the post is never re-published either
+    assert deleted == []
 
+
+def test_delete_refused_when_copy_has_more_reach(env, monkeypatch):
+    posts = env / "posts"
+    posts.mkdir()
+    (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [{"network": "threads", "id": "2", "permalink": "https://t/2", "kept_id": "1"}]}))
+    live = {"1": {"id": "1", "text": "Same words", "media_type": "IMAGE", "timestamp": "2026-11-23T10:00:00+0000"},
+            "2": {"id": "2", "text": "Same words", "media_type": "IMAGE", "permalink": "https://t/2", "timestamp": "2026-11-23T11:00:00+0000"}}
+    stats = {"1": 10, "2": 500}
+
+    def get(url, params=None, timeout=None):
+        pid = url.split("/")[-2] if url.endswith("/insights") else url.rsplit("/", 1)[-1]
+        if url.endswith("/insights"):
+            return Resp({"data": [{"name": "views", "total_value": {"value": stats[pid]}}]})
+        return Resp(live[pid])
+    deleted = []
+    monkeypatch.setattr(networks.requests, "get", get)
+    monkeypatch.setattr(networks.requests, "delete", lambda *a, **k: deleted.append(a) or Resp({"success": True}))
+    cli.cmd_run(posts, dry=False)
+    q = json.loads((posts / cli.DELETE_FILE).read_text())["delete"][0]
+    assert deleted == [] and q["status"] == "keep" and "more views" in q["evidence"]["verdict"]
 
 def test_case_and_shared_words():
     assert dedupe.case_of(slug="2026-11-23_salt_mirror") == "salt-mirror"
@@ -373,7 +404,7 @@ def test_scan_queues_only_identical_duplicates(env, monkeypatch, capsys):
     cli.cmd_run(posts, dry=False)
     q = json.loads((posts / cli.DELETE_FILE).read_text())["delete"]
     assert [i["id"] for i in q] == ["2"]  # only the exact copy; other media type, longer text, other caption all stay
-    assert "https://t/a" in q[0]["reason"]
+    assert "https://t/a" in q[0]["reason"] and q[0]["kept_id"] == "1"
     assert "DUPLICATE FOUND ON ACCOUNT" in capsys.readouterr().out
     cli.cmd_run(posts, dry=False)
     assert len(json.loads((posts / cli.DELETE_FILE).read_text())["delete"]) == 1

@@ -312,6 +312,24 @@ class Threads:
         if not post.text(self.name) and not post.images(self.name):
             raise PostError(f"{self.name}: empty post")
 
+    def get_post(self, media_id: str) -> dict:
+        """One post as it is live now (raises ApiError if it no longer exists)."""
+        return _check(requests.get(f"{self.base}/{media_id}", params={
+            "fields": "id,text,media_type,permalink,timestamp", "access_token": self._token()}, timeout=TIMEOUT))
+
+    def views(self, media_id: str):
+        """Views and likes of a post, or None when insights are not available to this token."""
+        try:
+            body = _check(requests.get(f"{self.base}/{media_id}/insights", params={
+                "metric": "views,likes", "access_token": self._token()}, timeout=TIMEOUT))
+        except ApiError:
+            return None
+        out = {}
+        for m in body.get("data", []):
+            vals = m.get("values") or [{}]
+            out[m.get("name")] = (m.get("total_value") or {}).get("value", vals[0].get("value"))
+        return out
+
     def delete(self, media_id: str, permalink: str = "") -> dict:
         """Delete one post of this account (Threads API, needs threads_delete). When a permalink is given,
         the post's own permalink must end with the same code, so a wrong id can never delete another post."""
