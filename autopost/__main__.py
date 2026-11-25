@@ -135,6 +135,8 @@ def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list)
     for item in data.get("delete", []):
         if item.get("status") in ("deleted", "failed", "needs_permission", "keep"):
             continue  # done, given up, or waiting for a token with threads_delete (reset status to retry)
+        if item.get("status") == "pending_owner" and item.get("owner_approved") is not True:
+            continue  # evidence shown, waiting for the owner's "так" for this exact URL
         net, mid, label = item.get("network"), str(item.get("id") or ""), item.get("permalink") or item.get("id")
         if dry:
             rows.append((item.get("slug") or "-", net, f"[dry-run] would delete duplicate {label}"))
@@ -149,6 +151,12 @@ def run_deletions(posts_dir: pathlib.Path, posts, ledger, dry: bool, rows: list)
                 item.update(status="keep", note="evidence check failed: " + evidence.get("verdict", ""))
                 print(f"DELETE REFUSED (no evidence): {net} {label}: {evidence.get('verdict')}")
                 rows.append((item.get("slug") or "-", net, f"🛡 kept, not a proven duplicate: {label} ({evidence.get('verdict')})"))
+                continue
+            if item.get("owner_approved") is not True:  # owner 25.11: evidence alone is not enough
+                item.update(status="pending_owner", note="proven identical; waiting for the owner to approve this exact URL "
+                                                         "(set \"owner_approved\": true after his explicit yes)")
+                print(f"DELETE WAITS FOR OWNER: {net} {label} (evidence ok)")
+                rows.append((item.get("slug") or "-", net, f"⏳ proven duplicate, waiting for owner approval: {label}"))
                 continue
             pub.delete(mid, item.get("permalink", ""))
             item.update(status="deleted", at=now_utc().isoformat(timespec="seconds"))

@@ -310,11 +310,13 @@ def test_delete_queue(env, monkeypatch, capsys):
     _text_post(posts, "dd", SERPENS)
     (posts / "dd" / "published.json").write_text(json.dumps({"threads": {"status": "published", "id": "55", "url": "https://www.threads.com/@a/post/ABC"}}))
     (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [
-        {"network": "threads", "id": "55", "permalink": "https://www.threads.com/@a/post/ABC", "slug": "dd", "kept_id": "50"},
+        {"network": "threads", "id": "55", "permalink": "https://www.threads.com/@a/post/ABC", "slug": "dd", "kept_id": "50", "owner_approved": True},
+        {"network": "threads", "id": "56", "permalink": "https://www.threads.com/@a/post/NOAP", "kept_id": "50"},
         {"network": "threads", "id": "66", "permalink": "https://www.threads.com/@a/post/DIF", "kept_id": "50"},
         {"network": "threads", "id": "77", "permalink": "https://www.threads.com/@a/post/OLD"}]}))
     live = {"50": {"id": "50", "text": SERPENS, "media_type": "TEXT_POST", "permalink": "https://t/orig", "timestamp": "2026-11-23T10:00:00+0000"},
             "55": {"id": "55", "text": SERPENS, "media_type": "TEXT_POST", "permalink": "https://www.threads.net/@a/post/ABC/", "timestamp": "2026-11-23T11:00:00+0000"},
+            "56": {"id": "56", "text": SERPENS, "media_type": "TEXT_POST", "permalink": "https://www.threads.com/@a/post/NOAP", "timestamp": "2026-11-23T11:30:00+0000"},
             "66": {"id": "66", "text": SERPENS + " more", "media_type": "TEXT_POST", "permalink": "https://www.threads.com/@a/post/DIF", "timestamp": "2026-11-23T12:00:00+0000"}}
     deleted = []
 
@@ -328,6 +330,7 @@ def test_delete_queue(env, monkeypatch, capsys):
     assert deleted == ["https://graph.threads.net/v1.0/55"]  # only the proven identical copy
     q = {i["id"]: i for i in json.loads((posts / cli.DELETE_FILE).read_text())["delete"]}
     assert q["55"]["status"] == "deleted" and q["55"]["evidence"]["verdict"] == "proven identical duplicate"
+    assert q["56"]["status"] == "pending_owner" and q["56"]["evidence"]["verdict"] == "proven identical duplicate"
     assert q["66"]["status"] == "keep" and "differ" in q["66"]["evidence"]["verdict"]
     assert q["77"]["status"] == "keep" and "no original" in q["77"]["evidence"]["verdict"]
     assert json.loads((posts / "dd" / "published.json").read_text())["threads"]["status"] == "deleted_duplicate"
@@ -339,7 +342,7 @@ def test_delete_queue(env, monkeypatch, capsys):
 def test_delete_refused_when_copy_has_more_reach(env, monkeypatch):
     posts = env / "posts"
     posts.mkdir()
-    (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [{"network": "threads", "id": "2", "permalink": "https://t/2", "kept_id": "1"}]}))
+    (posts / cli.DELETE_FILE).write_text(json.dumps({"delete": [{"network": "threads", "id": "2", "permalink": "https://t/2", "kept_id": "1", "owner_approved": True}]}))
     live = {"1": {"id": "1", "text": "Same words", "media_type": "IMAGE", "timestamp": "2026-11-23T10:00:00+0000"},
             "2": {"id": "2", "text": "Same words", "media_type": "IMAGE", "permalink": "https://t/2", "timestamp": "2026-11-23T11:00:00+0000"}}
     stats = {"1": 10, "2": 500}
