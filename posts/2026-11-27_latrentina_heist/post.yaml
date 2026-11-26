@@ -1,0 +1,31 @@
+case: latrentina-heist
+publish_at: "2026-11-27 08:30"
+video: reel.mp4
+# Board pc35f07b8 LA TRENTINA «Пограбування». Owner 26.11 22:06: post the HORIZONTAL 16:9 version with music everywhere (not 9:16).
+instagram:
+  enabled: false   # manual, pack D:\AI\MELA-Content\manual-ig\2026-11-27_0830_LATRENTINA
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+linkedin:
+  enabled: true
+  publish_at: "2026-11-27 08:30"
+  text: |
+    LA TRENTINA: what if an apple ad felt like a heist movie?
+
+    A short film with a twist: storyboard, key frames, shot-by-shot film, edit, sound and colour, then an ultra-high-res finish. A brand film with the logo built in.
+
+    Unofficial concept for La Trentina, not commissioned. Directed and edited by MELA Team. Melinda, shall we shoot the next one for you?
+
+    Which shot would you open with: the first, the macro or the packshot? Comment BRIEF and we'll send you how we'd do this for your product.
+
+    mela.team
+
+    #brandfilm #adfilm #trentino #productvideo #creativeagency
+threads:
+  publish_at: "2026-11-27 08:30"
+  text: |
+    LA TRENTINA. What if an apple ad felt like a heist movie. Unofficial concept for @latrentina, and a hello to @melinda.valdinon 🍎 Comment BRIEF for the breakdown. mela.team #Trentino
+threads_vasyl:
+  publish_at: "2026-11-27 08:32"
+  text: |
+    What if an apple ad felt like a heist movie? LA TRENTINA, an unofficial concept for @latrentina with a hello to @melinda.valdinon 🍎 Comment BRIEF and we'll show you how we'd film your product. mela.team
