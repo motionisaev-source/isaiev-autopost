@@ -1,6 +1,7 @@
 case: price01
 publish_at: "2026-11-26 19:00"
 images: [01.jpg, 02.jpg, 03.jpg, 04.jpg, 05.jpg, 06.jpg]
+# 26.11: slides redone with v4 prices ($900/$1,100/$2,000/$6,300). Board approval was removed; re-enable threads only after the owner's new "так".
 instagram:
   enabled: false   # manual, pack D:\AI\MELA-Content\manual-ig\2026-11-26_1900_PRICE01
 linkedin:
@@ -8,10 +9,12 @@ linkedin:
 telegram:
   enabled: false   # sent via PC to MELA_Lab
 threads:
+  enabled: false   # HOLD: waiting for owner re-approval of v4 version
   publish_at: "2026-11-26 19:00"
   text: |
-    What a small budget buys at MELA Team: an AI photoshoot on any location, or campaign key visuals for ads and social. Fixed scope, files are yours.
+    What $900 buys you at MELA: the answer is on the slides. Fixed scope, first frames in 48 hours.
 
     Comment PRICE and we'll send the full sheet. mela.team #Marketing
 threads_vasyl:
+  enabled: false   # HOLD
   publish_at: "2026-11-26 19:00"
