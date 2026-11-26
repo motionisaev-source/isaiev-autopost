@@ -1,0 +1,40 @@
+﻿name: threads-delete
+# One-off deletes of Threads posts. Each line of ops/threads-delete.txt: "<THREADS|THREADS_VASYL> <media_id>". Done lines move to ops/threads-deleted.txt.
+on:
+  push:
+    paths: ["ops/threads-delete.txt"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+      - name: Delete listed posts
+        env:
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_VASYL_ACCESS_TOKEN: ${{ secrets.THREADS_VASYL_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os, json, urllib.request, urllib.parse, datetime
+          p = "ops/threads-delete.txt"
+          lines = [l.split() for l in open(p) if l.strip() and not l.startswith("#")]
+          done, keep = [], []
+          for pref, mid in lines:
+              tok = os.environ[f"{pref}_ACCESS_TOKEN"]
+              req = urllib.request.Request(f"https://graph.threads.net/v1.0/{mid}?" + urllib.parse.urlencode({"access_token": tok}), method="DELETE")
+              try:
+                  body = urllib.request.urlopen(req, timeout=60).read().decode()
+                  print(pref, mid, "OK", body); done.append(f"{pref} {mid} {datetime.datetime.utcnow().isoformat()}Z {body}")
+              except urllib.error.HTTPError as e:
+                  msg = e.read().decode()[:300]; print(pref, mid, "FAIL", e.code, msg); keep.append(f"{pref} {mid}"); done.append(f"{pref} {mid} FAIL {e.code} {msg}")
+          open(p, "w").write("\n".join(keep) + ("\n" if keep else ""))
+          open("ops/threads-deleted.txt", "a").write("\n".join(done) + "\n")
+          PY
+      - name: Save
+        run: |
+          git config user.name "autopost-bot"; git config user.email "autopost-bot@users.noreply.github.com"
+          git add ops; git commit -m "threads-delete: log [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -X theirs && git push && exit 0; sleep 5; done
