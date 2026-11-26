@@ -302,6 +302,26 @@
       "id": "17885525877535390",
       "url": "https://www.threads.com/@isaiev_vasyl/post/DgMk07IHHYP",
       "source": "autopost"
+    },
+    {
+      "slug": "2026-11-26_it01",
+      "network": "threads",
+      "hook": "hotel dolomiti. un hotel alpino che non esiste ancora, dal primo picchetto alle ",
+      "case": "it01",
+      "at": "2026-11-26T10:04:07+00:00",
+      "id": "18104446175076993",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgM2Lwqhcn9",
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-26_it01",
+      "network": "threads_vasyl",
+      "hook": "hotel dolomiti: an alpine hotel that doesn't exist yet, from the first survey st",
+      "case": "it01",
+      "at": "2026-11-26T10:04:40+00:00",
+      "id": "18131019253879621",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgM2PjRhqTo",
+      "source": "autopost"
     }
   ]
 }
