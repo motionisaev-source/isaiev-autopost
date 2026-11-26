@@ -1,0 +1,18 @@
+case: it01
+publish_at: "2026-11-26 11:00"
+video: reel.mp4
+# Italia track 11:00, board id it01 HOTEL DOLOMITI (approved 25.11)
+instagram:
+  enabled: false   # manual, pack D:\AI\MELA-Content\manual-ig\2026-11-26_1100_IT01
+linkedin:
+  enabled: false   # manual
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+threads:
+  publish_at: "2026-11-26 11:00"
+  text: |
+    HOTEL DOLOMITI. Un hotel alpino che non esiste ancora, dal primo picchetto alle luci della spa, in un'unica inquadratura. An alpine hotel that doesn't exist yet, built in one shot. Comment BRIEF and we'll show you how we'd film your project. mela.team #Architecture
+threads_vasyl:
+  publish_at: "2026-11-26 11:02"
+  text: |
+    HOTEL DOLOMITI: an alpine hotel that doesn't exist yet, from the first survey stake in the snow to the spa lights, in one continuous shot. Comment BRIEF and we'll show you how we'd film your project before the first stone. mela.team
