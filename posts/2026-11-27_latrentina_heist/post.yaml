@@ -7,7 +7,7 @@ instagram:
 telegram:
   enabled: false   # sent via PC to MELA_Lab
 linkedin:
-  enabled: true
+  enabled: false   # repo has no LINKEDIN_AUTHOR_URN; LinkedIn is posted by the LinkedIn thread
   publish_at: "2026-11-27 08:30"
   text: |
     LA TRENTINA: what if an apple ad felt like a heist movie?

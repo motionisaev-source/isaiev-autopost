@@ -1,0 +1,19 @@
+publish_at: "2026-12-01 12:30"
+images: [01.png, 02.png, 03.png]
+instagram:
+  enabled: false   # APPROVED 20.11 — manual posting while Meta API is blocked
+  caption: |
+    9:16 or 16:9? Both.
+
+    Wide for the story, vertical for the thumb. One idea, designed once, delivered in every format.
+
+    → mela.team
+
+    #reels #shortformvideo #productvisuals #3dmotion #creativeagency #aicreative #brandvisuals
+threads:
+  enabled: false   # APPROVED 20.11 — enable when Meta unblocks API
+  publish_at: "2026-12-01 12:45"
+  text: |
+    9:16 or 16:9? Both.
+
+    Wide for the story, vertical for the thumb. One idea, designed once, delivered in every format.
