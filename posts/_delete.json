@@ -119,6 +119,37 @@
       },
       "status": "pending_owner",
       "note": "proven identical; waiting for the owner to approve this exact URL (set \"owner_approved\": true after his explicit yes)"
+    },
+    {
+      "network": "threads_vasyl",
+      "id": "17982680414915956",
+      "permalink": "https://www.threads.com/@isaiev_vasyl/post/DgNzfGHie-T",
+      "slug": "2026-11-26_price01b",
+      "kept_id": "18116245199127156",
+      "kept_permalink": "https://www.threads.com/@isaiev_vasyl/post/DgNs9lFCahg",
+      "reason": "identical text and media type; newer copy of https://www.threads.com/@isaiev_vasyl/post/DgNs9lFCahg",
+      "found": "2026-11-26T21:07:05+00:00",
+      "evidence": {
+        "checked_at": "2026-11-26T21:07:05+00:00",
+        "kept": "https://www.threads.com/@isaiev_vasyl/post/DgNs9lFCahg",
+        "copy": "https://www.threads.com/@isaiev_vasyl/post/DgNzfGHie-T",
+        "kept_media": "CAROUSEL_ALBUM",
+        "copy_media": "CAROUSEL_ALBUM",
+        "same_text": true,
+        "kept_time": "2026-11-26T18:02:24+0000",
+        "copy_time": "2026-11-26T18:59:25+0000",
+        "copy_stats": {
+          "views": 0,
+          "likes": 0
+        },
+        "kept_stats": {
+          "views": 1,
+          "likes": 0
+        },
+        "verdict": "proven identical duplicate"
+      },
+      "status": "pending_owner",
+      "note": "proven identical; waiting for the owner to approve this exact URL (set \"owner_approved\": true after his explicit yes)"
     }
   ]
 }
