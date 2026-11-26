@@ -322,6 +322,26 @@
       "id": "18131019253879621",
       "url": "https://www.threads.com/@isaiev_vasyl/post/DgM2PjRhqTo",
       "source": "autopost"
+    },
+    {
+      "slug": "2026-11-26_ice",
+      "network": "threads",
+      "hook": "this bank card was launched before it existed. no studio, no ice, no prop maker.",
+      "case": "ice",
+      "at": "2026-11-26T11:31:51+00:00",
+      "id": "18101587139108361",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgNAQQPkakc",
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-26_ice",
+      "network": "threads_vasyl",
+      "hook": "this bank card was launched before it existed. no studio, no ice, no prop maker.",
+      "case": "ice",
+      "at": "2026-11-26T11:32:29+00:00",
+      "id": "18276524536306521",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgNAUw0kdW2",
+      "source": "autopost"
     }
   ]
 }
