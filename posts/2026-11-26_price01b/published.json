@@ -10,5 +10,9 @@
     "at": "2026-11-26T18:59:28+00:00",
     "id": "17982680414915956",
     "url": "https://www.threads.com/@isaiev_vasyl/post/DgNzfGHie-T"
+  },
+  "linkedin": {
+    "status": "failed",
+    "last_error": "linkedin: set secret LINKEDIN_AUTHOR_URN (urn:li:person:... or urn:li:organization:...)"
   }
 }
