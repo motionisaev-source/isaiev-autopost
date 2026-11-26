@@ -1,0 +1,2 @@
+THREADS 18352561768251831 FAIL 403 {"error":{"message":"Application does not have permission for this action","code":10,"type":"THApiException","fbtrace_id":"AHjtr41Fc7IHNkYnGaWL3WF"}}
+THREADS_VASYL 18116245199127156 FAIL 403 {"error":{"message":"Application does not have permission for this action","code":10,"type":"THApiException","fbtrace_id":"AShR0FVz5udw8RfsKHNu4yt"}}
