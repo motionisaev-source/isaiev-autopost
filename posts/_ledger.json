@@ -422,6 +422,26 @@
       "id": "18121230160807265",
       "url": "https://www.threads.com/@isaiev_vasyl/post/DgPpaA_kYyg",
       "source": "autopost"
+    },
+    {
+      "slug": "2026-11-27_thr04",
+      "network": "threads",
+      "hook": "a fun trick for your next trip. take a photo of old ruins. then ask chatgpt or a",
+      "case": "thr04",
+      "at": "2026-11-27T18:03:33+00:00",
+      "id": "18135753472795112",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgQR4KwlI17",
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-27_thr04",
+      "network": "threads_vasyl",
+      "hook": "a fun trick for your next trip. take a photo of old ruins. then ask chatgpt or a",
+      "case": "thr04",
+      "at": "2026-11-27T18:03:45+00:00",
+      "id": "18136484527749711",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgQR5m0FCsK",
+      "source": "autopost"
     }
   ]
 }
