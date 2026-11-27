@@ -1,0 +1,24 @@
+case: thr04
+publish_at: "2026-11-27 19:00"
+images: [01.jpg]
+# Board thr04 (19:00 slot, approved 25.11). Threads only.
+instagram:
+  enabled: false
+linkedin:
+  enabled: false
+telegram:
+  enabled: false
+threads:
+  publish_at: "2026-11-27 19:00"
+  text: |
+    A fun trick for your next trip.
+
+    Take a photo of old ruins. Then ask ChatGPT or another AI: "Show me how this place looked when it was new." It adds the missing walls, roofs and people right on your photo.
+
+    Your holiday pictures become a time machine.
+
+    Shops and old buildings can use this too: the past and the present side by side. Want a story like this for your place? Message us. mela.team
+
+    #chatgpt
+threads_vasyl:
+  publish_at: "2026-11-27 19:02"
