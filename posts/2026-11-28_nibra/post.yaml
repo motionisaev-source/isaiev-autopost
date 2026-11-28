@@ -1,0 +1,18 @@
+case: nibra
+publish_at: "2026-11-28 08:30"
+video: reel.mp4
+# Board nibra (08:30 slot, approved 24.11). IG Reels + FB via owner bot pack; TikTok via Chrome; TG via PC; LinkedIn via LinkedIn thread.
+instagram:
+  enabled: false
+telegram:
+  enabled: false   # sent via PC to MELA_Lab
+linkedin:
+  enabled: false   # repo has no LINKEDIN_AUTHOR_URN; LinkedIn is posted by the LinkedIn thread
+threads:
+  publish_at: "2026-11-28 08:30"
+  text: |
+    NIBRA. One product photo became this film. Comment FILM for the prompt structure. mela.team #BrandFilm
+threads_vasyl:
+  publish_at: "2026-11-28 08:32"
+  text: |
+    NIBRA. One product photo became this film. Comment FILM for the prompt structure. mela.team
