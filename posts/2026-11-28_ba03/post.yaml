@@ -1,0 +1,22 @@
+case: ba03
+publish_at: "2026-11-28 12:30"
+images: [01.png]
+# Board ba03 (12:30). IG via Chrome, FB via owner pack.
+instagram:
+  enabled: false
+linkedin:
+  enabled: false
+telegram:
+  enabled: false
+threads:
+  publish_at: "2026-11-28 12:30"
+  text: |
+    AS IS / COULD BE. An experiment.
+
+    We took an empty warehouse and imagined the office a team would fight to work in. Left: the space today. Right: what it could become.
+
+    Which result do you like more? Tell us in the comments.
+
+    mela.team #Architecture
+threads_vasyl:
+  publish_at: "2026-11-28 12:32"
