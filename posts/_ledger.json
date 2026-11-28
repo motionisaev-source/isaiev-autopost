@@ -442,6 +442,26 @@
       "id": "18136484527749711",
       "url": "https://www.threads.com/@isaiev_vasyl/post/DgQR5m0FCsK",
       "source": "autopost"
+    },
+    {
+      "slug": "2026-11-28_nibra",
+      "network": "threads",
+      "hook": "nibra. one product photo became this film. comment film for the prompt structure",
+      "case": "nibra",
+      "at": "2026-11-28T07:33:58+00:00",
+      "id": "18135574082508445",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgRuld-haKQ",
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-28_nibra",
+      "network": "threads_vasyl",
+      "hook": "nibra. one product photo became this film. comment film for the prompt structure",
+      "case": "nibra",
+      "at": "2026-11-28T07:34:31+00:00",
+      "id": "18160280215518541",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgRupf0vo3a",
+      "source": "autopost"
     }
   ]
 }
