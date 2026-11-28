@@ -1,0 +1,20 @@
+case: nb16
+publish_at: "2026-11-28 19:00"
+images: [01.png]
+# Board nb16 (19:00). IG/FB/LinkedIn via Chrome.
+instagram:
+  enabled: false
+linkedin:
+  enabled: false
+telegram:
+  enabled: false
+threads:
+  publish_at: "2026-11-28 18:55"
+  text: |
+    Fresh bread by cable car. Your corner shop could be the legend of the village. 🥖
+
+    A concept frame, not a commissioned project. Which local business should we imagine next?
+
+    mela.team #Italy
+threads_vasyl:
+  publish_at: "2026-11-28 18:57"
