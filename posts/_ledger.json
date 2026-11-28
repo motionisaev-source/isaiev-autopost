@@ -462,6 +462,26 @@
       "id": "18160280215518541",
       "url": "https://www.threads.com/@isaiev_vasyl/post/DgRupf0vo3a",
       "source": "autopost"
+    },
+    {
+      "slug": "2026-11-28_ba03",
+      "network": "threads",
+      "hook": "as is / could be. an experiment. we took an empty warehouse and imagined the off",
+      "case": "ba03",
+      "at": "2026-11-28T11:33:43+00:00",
+      "id": "18136202890877622",
+      "url": "https://www.threads.com/@isaiev_ai/post/DgSKDgbFLKE",
+      "source": "autopost"
+    },
+    {
+      "slug": "2026-11-28_ba03",
+      "network": "threads_vasyl",
+      "hook": "as is / could be. an experiment. we took an empty warehouse and imagined the off",
+      "case": "ba03",
+      "at": "2026-11-28T11:33:58+00:00",
+      "id": "18130790840301557",
+      "url": "https://www.threads.com/@isaiev_vasyl/post/DgSKFT_FLQe",
+      "source": "autopost"
     }
   ]
 }
